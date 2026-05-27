@@ -254,7 +254,43 @@ body:not(.edit-mode) .status-select{pointer-events:none}
 /* KPI counter animation */
 .kpi-num[data-target]{font-variant-numeric:tabular-nums}
 
-/* ── REFERENCIAS ── */
+/* ── CASOS DE ESTUDIO ── */
+.caso-card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);margin-bottom:24px;overflow:hidden;animation:fadeUp .4s ease both}
+.caso-header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.caso-header.danger{background:linear-gradient(135deg,#c1121f,#e63946)}
+.caso-header.success{background:linear-gradient(135deg,#2d6a4f,#52b788)}
+.caso-header.warning{background:linear-gradient(135deg,#b5860a,#e9c46a)}
+.caso-num{font-family:'DM Mono',monospace;font-weight:700;font-size:.9rem;color:#fff;letter-spacing:1px}
+.caso-tipo{font-size:.78rem;font-weight:700;color:#fff;opacity:.9}
+.caso-body{padding:20px}
+.caso-title{font-size:1rem;font-weight:800;color:var(--primary);margin-bottom:8px}
+.caso-desc{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.caso-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+@media(max-width:700px){.caso-cols{grid-template-columns:1fr}}
+.caso-col{padding:14px;border-radius:8px}
+.caso-col.green{background:#e8f5e9}
+.caso-col.red{background:#fdecea}
+.caso-col.blue{background:#e8f0fe}
+.caso-col h4{font-size:.8rem;font-weight:800;margin-bottom:8px;color:var(--text)}
+.caso-col ul{list-style:none;padding:0}
+.caso-col li{display:flex;gap:6px;align-items:flex-start;font-size:.78rem;padding:3px 0;color:var(--text)}
+.caso-section-title{font-size:.82rem;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px}
+
+/* Botón documentar como caso en CV cards */
+.cv-case-btn{flex:1;padding:6px;border:1.5px solid var(--primary);border-radius:6px;font-size:.72rem;font-weight:700;cursor:pointer;background:#fff;color:var(--primary);transition:all .15s}
+.cv-case-btn:hover{background:var(--primary);color:#fff}
+
+/* Modal nuevo caso */
+.caso-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center}
+.caso-modal-overlay.open{display:flex}
+.caso-modal{background:#fff;border-radius:14px;padding:28px;width:90%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:fadeUp .25s ease}
+.caso-modal h3{font-size:1rem;font-weight:800;color:var(--primary);margin-bottom:18px}
+.caso-modal label{display:block;font-size:.74rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;margin-top:12px}
+.caso-modal input,.caso-modal textarea,.caso-modal select{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:6px;font-size:.84rem;font-family:inherit;outline:none}
+.caso-modal textarea{resize:vertical;min-height:80px}
+.caso-modal-actions{display:flex;gap:10px;margin-top:18px}
+.caso-modal-save{flex:1;background:var(--primary);color:#fff;border:none;border-radius:6px;padding:10px;font-size:.84rem;font-weight:700;cursor:pointer}
+.caso-modal-cancel{background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:6px;padding:10px 16px;font-size:.84rem;cursor:pointer}
 .ref-drop-zone{border:2.5px dashed var(--primary);border-radius:14px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#f8faff;margin-bottom:20px;position:relative}
 .ref-drop-zone:hover,.ref-drop-zone.drag-over{border-color:var(--accent);background:#fff5f0}
 .ref-drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -374,6 +410,32 @@ body:not(.edit-mode) .status-select{pointer-events:none}
   </div>
 </div>
 
+<!-- MODAL NUEVO CASO DE ESTUDIO -->
+<div class="caso-modal-overlay" id="casoModalOverlay">
+  <div class="caso-modal">
+    <h3>📖 Documentar como Caso de Estudio</h3>
+    <input type="hidden" id="caso-cv-id">
+    <label>Tipo de caso</label>
+    <select id="caso-tipo-select">
+      <option value="danger">⚠️ Fracaso / Inconformidad / Daño</option>
+      <option value="success">✅ Éxito destacado</option>
+      <option value="warning">⚡ Caso especial / Aprendizaje</option>
+    </select>
+    <label>Título del caso</label>
+    <input type="text" id="caso-titulo" placeholder="Ej: El técnico especializado en taller polivalente">
+    <label>Área y duración</label>
+    <input type="text" id="caso-area-duracion" placeholder="Ej: Taller · 3 meses · 2024">
+    <label>¿Qué pasó? ¿Qué aprendiste?</label>
+    <textarea id="caso-descripcion" placeholder="Describe el caso: por qué fue contratado, qué ocurrió, qué señales había en el CV, qué harías diferente..."></textarea>
+    <label>Pregunta de entrevista recomendada (opcional)</label>
+    <input type="text" id="caso-pregunta" placeholder="La pregunta que hubiera detectado el problema...">
+    <div class="caso-modal-actions">
+      <button class="caso-modal-cancel" onclick="closeCasoModal()">Cancelar</button>
+      <button class="caso-modal-save" onclick="saveCasoEstudio()">📖 Guardar caso</button>
+    </div>
+  </div>
+</div>
+
 <!-- SETTINGS PANEL -->
 <div class="settings-overlay" id="settingsOverlay" onclick="toggleSettings()"></div>
 <div class="settings-panel" id="settingsPanel">
@@ -416,7 +478,7 @@ body:not(.edit-mode) .status-select{pointer-events:none}
   <button class="tab-btn active" onclick="showTab('tab-resumen')">📊 Resumen Ejecutivo</button>
   <button class="tab-btn" onclick="showTab('tab-patron')">🔍 Patrón General</button>
   <button class="tab-btn" onclick="showTab('tab-contratados')">👥 Contratados</button>
-  <button class="tab-btn" onclick="showTab('tab-miguel')">⚠️ Caso Miguel Ramos</button>
+  <button class="tab-btn" onclick="showTab('tab-miguel')">📖 Casos de Estudio</button>
   <button class="tab-btn" onclick="showTab('tab-recomendados')">⭐ Recomendados</button>
   <button class="tab-btn" onclick="showTab('tab-consideracion')">🔍 En Consideración</button>
   <button class="tab-btn" onclick="showTab('tab-archivo')">📁 Archivo</button>
@@ -990,87 +1052,96 @@ body:not(.edit-mode) .status-select{pointer-events:none}
 <!-- ===== TAB 4: MIGUEL RAMOS ===== -->
 <div class="tab-content" id="tab-miguel">
 
-  <div class="case-header">
-    <h2>⚠️ <span class="editable" contenteditable="false">Caso de Estudio: Miguel Antonio Ramos</span></h2>
-    <p class="editable-block" contenteditable="false">Contratado para taller — desarrollo muy bueno — salida por inconformidad con actividades. Un caso 100% predecible desde el CV.</p>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+    <div>
+      <div class="section-title" style="margin-bottom:4px">📖 Casos de Estudio</div>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.5">Casos reales documentados de tu empresa — éxitos y fracasos con análisis profundo. Son tu manual de criterios para quien opere el Radar después de ti.</p>
+    </div>
+    <button onclick="addCasoEstudio()" style="background:var(--primary);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:.82rem;font-weight:700;cursor:pointer">+ Nuevo caso</button>
   </div>
 
-  <div class="case-cols">
-    <div class="case-col green">
-      <h4>¿Por qué fue contratado?</h4>
-      <ul id="case-list-green">
-        <li><span>✓</span><span class="li-text editable" contenteditable="false">CV sólido con experiencia técnica real</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✓</span><span class="li-text editable" contenteditable="false">Historial en empresas serias (Caterpillar, Milwaukee, Yura)</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✓</span><span class="li-text editable" contenteditable="false">Conocimiento de manufactura y procesos</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✓</span><span class="li-text editable" contenteditable="false">Probablemente buena presencia en entrevista</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✓</span><span class="li-text editable" contenteditable="false">Rindió muy bien técnicamente en el puesto</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="case-col red">
-      <h4>¿Qué salió mal?</h4>
-      <ul id="case-list-red">
-        <li><span>✗</span><span class="li-text editable" contenteditable="false">Esperaba rol de ingeniería formal estructurado</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✗</span><span class="li-text editable" contenteditable="false">Taller polivalente le generó inconformidad</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✗</span><span class="li-text editable" contenteditable="false">Venía de entornos CNC/manufactura especializada</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✗</span><span class="li-text editable" contenteditable="false">Sus empleadores anteriores definen expectativas altas</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>✗</span><span class="li-text editable" contenteditable="false">No era fit cultural, era fit técnico solamente</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="case-col blue">
-      <h4>Lección aprendida</h4>
-      <ul id="case-list-blue">
-        <li><span>→</span><span class="li-text editable" contenteditable="false">El talento técnico no predice retención</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>→</span><span class="li-text editable" contenteditable="false">La especialización puede ser un riesgo, no un activo</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>→</span><span class="li-text editable" contenteditable="false">El fit cultural es más importante que el técnico</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>→</span><span class="li-text editable" contenteditable="false">La entrevista debe explorar expectativas de rol</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span>→</span><span class="li-text editable" contenteditable="false">El CV de Miguel era una bandera roja ignorada</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-  </div>
+  <div id="casos-grid">
 
-  <div class="section-title">Banderas rojas en el CV de Miguel</div>
-  <div class="flag-grid" id="flag-grid">
-    <div class="flag-item">
-      <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
-      <h5 class="editable" contenteditable="false">🏭 Caterpillar en historial</h5>
-      <p class="editable-block" contenteditable="false">Empresa multinacional con roles muy estructurados. El salto a un taller polivalente local genera choque cultural inmediato.</p>
-    </div>
-    <div class="flag-item">
-      <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
-      <h5 class="editable" contenteditable="false">🔩 Milwaukee Tool</h5>
-      <p class="editable-block" contenteditable="false">Manufactura de herramientas de precisión. Perfil acostumbrado a estándares industriales formales, procesos documentados.</p>
-    </div>
-    <div class="flag-item">
-      <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
-      <h5 class="editable" contenteditable="false">⚙️ Yura Corporation</h5>
-      <p class="editable-block" contenteditable="false">Automotriz japonesa con cultura organizacional rígida y roles definidos. No compatible con taller de alta polivalencia.</p>
-    </div>
-    <div class="flag-item">
-      <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
-      <h5 class="editable" contenteditable="false">📋 Perfil de ingeniero CNC</h5>
-      <p class="editable-block" contenteditable="false">Formación orientada a manufactura de precisión. El taller polivalente no satisface sus expectativas de aplicación técnica.</p>
-    </div>
-    <div class="flag-item">
-      <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
-      <h5 class="editable" contenteditable="false">📈 Trayectoria ascendente especializada</h5>
-      <p class="editable-block" contenteditable="false">Historial de crecimiento en roles cada vez más especializados. Un paso lateral hacia taller se siente como retroceso profesional.</p>
-    </div>
-    <div class="flag-item">
-      <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
-      <h5 class="editable" contenteditable="false">💬 Sin experiencia en entornos mixtos</h5>
-      <p class="editable-block" contenteditable="false">Cero historial en empresas con múltiples funciones mezcladas. No estaba preparado para la diversidad de tareas del puesto.</p>
-    </div>
-    <button class="add-card-btn" onclick="addFlagItem()">+ Agregar bandera roja</button>
-  </div>
+    <!-- ══ CASO 001 — MIGUEL RAMOS ══ -->
+    <div class="caso-card" id="caso-001">
+      <div class="caso-header danger">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="caso-num">CASO 001</span>
+          <span class="caso-tipo danger">⚠️ Fracaso — Inconformidad</span>
+        </div>
+        <div style="font-size:.76rem;opacity:.8">Taller · 2024</div>
+      </div>
+      <div class="caso-body">
+        <div class="caso-title editable" contenteditable="false">Miguel Antonio Ramos — El técnico especializado en taller polivalente</div>
+        <div class="caso-desc editable-block" contenteditable="false">Contratado para taller con CV técnico sólido. Desarrollo muy bueno en los primeros días. Salida por inconformidad con las actividades a los pocos meses. Un caso 100% predecible desde el CV — las señales estaban ahí.</div>
 
-  <div class="section-title">Pregunta de entrevista recomendada</div>
-  <div class="quote-box">
-    <p class="editable-block" contenteditable="false">"Este puesto implica alternancia entre diferentes tareas físicas y administrativas según la demanda del día — a veces operación de maquinaria, a veces carga y organización, a veces apoyo a diseño. ¿Cómo te sientes con esa variedad? ¿Has trabajado en entornos así antes?"</p>
-    <p style="margin-top:10px;font-size:.78rem;opacity:.8" class="editable-block" contenteditable="false">Si la respuesta menciona "en mi empresa anterior teníamos procesos bien definidos por área" o similar — es señal de riesgo.</p>
-  </div>
+        <div class="caso-cols">
+          <div class="caso-col green">
+            <h4>✓ Por qué fue contratado</h4>
+            <ul id="case-list-green">
+              <li><span>✓</span><span class="li-text editable" contenteditable="false">CV sólido con experiencia técnica real</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>✓</span><span class="li-text editable" contenteditable="false">Historial en empresas serias (Caterpillar, Milwaukee, Yura)</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>✓</span><span class="li-text editable" contenteditable="false">Conocimiento de manufactura y procesos</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>✓</span><span class="li-text editable" contenteditable="false">Rindió muy bien técnicamente en el puesto</span><button class="del-btn" title="Eliminar">×</button></li>
+            </ul>
+            <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
+          </div>
+          <div class="caso-col red">
+            <h4>✗ Qué salió mal</h4>
+            <ul id="case-list-red">
+              <li><span>✗</span><span class="li-text editable" contenteditable="false">Esperaba rol de ingeniería formal estructurado</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>✗</span><span class="li-text editable" contenteditable="false">Taller polivalente le generó inconformidad</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>✗</span><span class="li-text editable" contenteditable="false">Venía de entornos CNC/manufactura especializada</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>✗</span><span class="li-text editable" contenteditable="false">No era fit cultural, era fit técnico solamente</span><button class="del-btn" title="Eliminar">×</button></li>
+            </ul>
+            <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
+          </div>
+          <div class="caso-col blue">
+            <h4>→ Lección aprendida</h4>
+            <ul id="case-list-blue">
+              <li><span>→</span><span class="li-text editable" contenteditable="false">El talento técnico no predice retención</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>→</span><span class="li-text editable" contenteditable="false">La especialización puede ser un riesgo, no un activo</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>→</span><span class="li-text editable" contenteditable="false">El fit cultural es más importante que el técnico</span><button class="del-btn" title="Eliminar">×</button></li>
+              <li><span>→</span><span class="li-text editable" contenteditable="false">La entrevista debe explorar expectativas de rol</span><button class="del-btn" title="Eliminar">×</button></li>
+            </ul>
+            <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
+          </div>
+        </div>
+
+        <div class="caso-section-title">🚩 Banderas rojas en el CV</div>
+        <div class="flag-grid" id="flag-grid">
+          <div class="flag-item">
+            <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
+            <h5 class="editable" contenteditable="false">🏭 Caterpillar en historial</h5>
+            <p class="editable-block" contenteditable="false">Empresa multinacional con roles muy estructurados. El salto a un taller polivalente local genera choque cultural inmediato.</p>
+          </div>
+          <div class="flag-item">
+            <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
+            <h5 class="editable" contenteditable="false">🔩 Milwaukee Tool</h5>
+            <p class="editable-block" contenteditable="false">Manufactura de herramientas de precisión. Perfil acostumbrado a estándares industriales formales, procesos documentados.</p>
+          </div>
+          <div class="flag-item">
+            <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
+            <h5 class="editable" contenteditable="false">⚙️ Yura Corporation</h5>
+            <p class="editable-block" contenteditable="false">Automotriz japonesa con cultura organizacional rígida y roles definidos. No compatible con taller de alta polivalencia.</p>
+          </div>
+          <div class="flag-item">
+            <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
+            <h5 class="editable" contenteditable="false">📈 Trayectoria ascendente especializada</h5>
+            <p class="editable-block" contenteditable="false">Historial de crecimiento en roles cada vez más especializados. Un paso lateral hacia taller se siente como retroceso profesional.</p>
+          </div>
+          <button class="add-card-btn" onclick="addFlagItem()">+ Agregar bandera roja</button>
+        </div>
+
+        <div class="caso-section-title">💬 Pregunta de entrevista recomendada</div>
+        <div class="quote-box">
+          <p class="editable-block" contenteditable="false">"Este puesto implica alternancia entre diferentes tareas físicas y administrativas según la demanda del día — a veces operación de maquinaria, a veces carga y organización, a veces apoyo a diseño. ¿Cómo te sientes con esa variedad? ¿Has trabajado en entornos así antes?"</p>
+          <p style="margin-top:10px;font-size:.78rem;opacity:.8" class="editable-block" contenteditable="false">Si la respuesta menciona "en mi empresa anterior teníamos procesos bien definidos por área" — es señal de riesgo.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- fin casos-grid -->
 </div>
 
 <!-- ===== TAB 5: RECOMENDADOS ===== -->
@@ -2066,6 +2137,7 @@ function renderCVCard(cv) {
       ${banderasHtml ? `<div class="cv-section"><div class="cv-section-title">Banderas rojas</div><div class="cv-tags">${banderasHtml}</div></div>` : ''}
       <div class="cv-card-actions">
         <button class="cv-action-btn cv-add-btn" onclick="addCVToRecomendados('${cv.id}')" id="add-btn-${cv.id}">⭐ Agregar a Recomendados</button>
+        <button class="cv-action-btn cv-case-btn" onclick="openCasoModal('${cv.id}')" title="Documentar como caso de estudio">📖</button>
         <button class="cv-action-btn cv-del-btn" onclick="deleteCVCard('${cv.id}')">🗑</button>
       </div>`;
   }
@@ -2655,6 +2727,94 @@ function loadRefDatabase() {
       }
     }
   } catch(e) {}
+}
+
+// ── CASOS DE ESTUDIO ──
+let casoCounter = 1; // starts at 2 since caso 001 exists
+
+function addCasoEstudio() {
+  document.getElementById('caso-cv-id').value = '';
+  document.getElementById('caso-titulo').value = '';
+  document.getElementById('caso-area-duracion').value = '';
+  document.getElementById('caso-descripcion').value = '';
+  document.getElementById('caso-pregunta').value = '';
+  document.getElementById('casoModalOverlay').classList.add('open');
+}
+
+function openCasoModal(cvId) {
+  const cv = cvDatabase.find(c => c.id === cvId);
+  document.getElementById('caso-cv-id').value = cvId;
+  if (cv) {
+    document.getElementById('caso-titulo').value = cv.name || '';
+    document.getElementById('caso-area-duracion').value = cv.area || '';
+    document.getElementById('caso-descripcion').value = cv.resumen || '';
+    // Auto-select tipo based on fit
+    const select = document.getElementById('caso-tipo-select');
+    if (cv.fit >= 70) select.value = 'success';
+    else if (cv.fit < 40) select.value = 'danger';
+    else select.value = 'warning';
+  }
+  document.getElementById('casoModalOverlay').classList.add('open');
+}
+
+function closeCasoModal() {
+  document.getElementById('casoModalOverlay').classList.remove('open');
+}
+
+function saveCasoEstudio() {
+  casoCounter++;
+  const num = String(casoCounter).padStart(3, '0');
+  const tipo = document.getElementById('caso-tipo-select').value;
+  const titulo = document.getElementById('caso-titulo').value.trim() || 'Caso sin título';
+  const areaDur = document.getElementById('caso-area-duracion').value.trim();
+  const desc = document.getElementById('caso-descripcion').value.trim();
+  const pregunta = document.getElementById('caso-pregunta').value.trim();
+
+  const tipoLabel = { danger: '⚠️ Fracaso', success: '✅ Éxito destacado', warning: '⚡ Caso especial' }[tipo];
+
+  const caso = document.createElement('div');
+  caso.className = 'caso-card';
+  caso.id = `caso-${num}`;
+  caso.innerHTML = `
+    <div class="caso-header ${tipo}">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="caso-num">CASO ${num}</span>
+        <span class="caso-tipo ${tipo}">${tipoLabel}</span>
+      </div>
+      <div style="font-size:.76rem;opacity:.8">${areaDur}</div>
+    </div>
+    <div class="caso-body">
+      <div class="caso-title editable" contenteditable="${editMode?'true':'false'}">${titulo}</div>
+      <div class="caso-desc editable-block" contenteditable="${editMode?'true':'false'}">${desc}</div>
+      <div class="caso-cols">
+        <div class="caso-col green">
+          <h4>✓ Por qué fue contratado</h4>
+          <ul><li><span>✓</span><span class="li-text editable" contenteditable="${editMode?'true':'false'}">Agrega los motivos de contratación</span><button class="del-btn" title="Eliminar">×</button></li></ul>
+          <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
+        </div>
+        <div class="caso-col red">
+          <h4>✗ Qué salió mal</h4>
+          <ul><li><span>✗</span><span class="li-text editable" contenteditable="${editMode?'true':'false'}">Agrega lo que no funcionó</span><button class="del-btn" title="Eliminar">×</button></li></ul>
+          <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
+        </div>
+        <div class="caso-col blue">
+          <h4>→ Lección aprendida</h4>
+          <ul><li><span>→</span><span class="li-text editable" contenteditable="${editMode?'true':'false'}">Agrega la lección</span><button class="del-btn" title="Eliminar">×</button></li></ul>
+          <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
+        </div>
+      </div>
+      ${pregunta ? `
+      <div class="caso-section-title">💬 Pregunta de entrevista recomendada</div>
+      <div class="quote-box">
+        <p class="editable-block" contenteditable="${editMode?'true':'false'}">"${pregunta}"</p>
+      </div>` : ''}
+      <button onclick="this.closest('.caso-card').remove();scheduleSave()" style="margin-top:14px;background:#fdecea;color:var(--danger);border:none;border-radius:6px;padding:7px 14px;font-size:.76rem;font-weight:700;cursor:pointer">🗑 Eliminar caso</button>
+    </div>`;
+
+  document.getElementById('casos-grid').appendChild(caso);
+  closeCasoModal();
+  scheduleSave();
+  showTab('tab-miguel');
 }
 
 // ── INIT ──
