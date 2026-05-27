@@ -460,7 +460,10 @@ body.analysis-active .save-status { display:none !important; }
   <div class="splash-title">Arrastra un CV.</div>
   <div class="splash-sub">Lo que necesitas saber en segundos.</div>
 
-  <div class="splash-drop" id="splashDrop">
+  <div class="splash-drop" id="splashDrop"
+    ondragover="event.preventDefault();this.classList.add('drag-over')"
+    ondragleave="this.classList.remove('drag-over')"
+    ondrop="event.preventDefault();this.classList.remove('drag-over');handleSplashDrop(event)">
     <input type="file" accept=".pdf" multiple onchange="handleSplashFiles(event)">
     <div class="splash-drop-icon">📄</div>
     <div class="splash-drop-title">Suelta el PDF aquí</div>
@@ -1496,7 +1499,10 @@ body.analysis-active .save-status { display:none !important; }
     </button>
   </div>
 
-  <div class="cv-drop-zone" id="cvDropZone">
+  <div class="cv-drop-zone" id="cvDropZone"
+    ondragover="event.preventDefault();this.classList.add('drag-over')"
+    ondragleave="this.classList.remove('drag-over')"
+    ondrop="event.preventDefault();this.classList.remove('drag-over');handleCVDrop(event)">
     <input type="file" accept=".pdf" multiple onchange="handleCVFiles(event)">
     <div class="cv-drop-icon">📄</div>
     <div class="cv-drop-title">Arrastra los CVs aquí o haz clic para seleccionar</div>
@@ -2170,6 +2176,20 @@ function updateCVStats() {
   document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-fit').textContent = highFit;
   document.getElementById('stat-pending').textContent = pending;
+}
+
+async function handleCVDrop(event) {
+  const files = Array.from(event.dataTransfer.files).filter(f => f.type === 'application/pdf');
+  if (!files.length) return;
+  document.getElementById('cv-empty').style.display = 'none';
+  for (const file of files) {
+    const id = 'cv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+    const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', fit: 0, area: '', fortalezas: [], banderas: [], resumen: '' };
+    cvDatabase.push(cvEntry);
+    renderCVCard(cvEntry);
+    updateCVStats();
+    await analyzeCV(file, cvEntry);
+  }
 }
 
 async function handleCVFiles(event) {
@@ -2956,18 +2976,28 @@ function enterDashboard(tabId) {
 
 let splashCVResult = null;
 
+async function handleSplashDrop(event) {
+  const files = Array.from(event.dataTransfer.files).filter(f => f.type === 'application/pdf');
+  if (!files.length) return;
+  // Reuse handleSplashFiles logic with a fake event
+  await processSplashFile(files[0]);
+}
+
 async function handleSplashFiles(event) {
   const files = Array.from(event.target.files);
   if (!files.length) return;
-  const file = files[0];
+  await processSplashFile(files[0]);
+  event.target.value = '';
+}
 
+async function processSplashFile(file) {
   // Hide splash
   const splash = document.getElementById('splash');
   splash.classList.add('hiding');
   setTimeout(() => splash.classList.add('hidden'), 500);
   document.body.classList.remove('splash-active');
 
-  // Show analysis screen — no header, no tabs
+  // Show analysis screen
   const screen = document.getElementById('analysisScreen');
   screen.classList.add('active');
   document.body.classList.add('analysis-active');
@@ -2983,7 +3013,6 @@ async function handleSplashFiles(event) {
 
   splashCVResult = cvEntry;
   showAnalysisResult(cvEntry);
-  event.target.value = '';
 }
 
 function showAnalysisResult(cv) {
