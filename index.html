@@ -1299,7 +1299,7 @@ body:not(.edit-mode) .status-select{pointer-events:none}
   </div>
 
   <!-- Patrón activo + botón recalcular -->
-  <div id="recalc-banner" style="display:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+  <div id="recalc-banner" style="display:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;padding:14px 18px;margin-bottom:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <div style="color:#fff">
       <div style="font-weight:700;font-size:.9rem">🧬 Patrón actualizado con <span id="recalc-ref-count">0</span> referencias</div>
       <div style="font-size:.76rem;opacity:.8;margin-top:3px">Última actualización: <span id="recalc-last-update">—</span></div>
@@ -2643,6 +2643,17 @@ function loadRefDatabase() {
       refDatabase.forEach(r => renderRefCard(r));
       updateRefStats();
       updatePatronFromRefs();
+      // Show banner if there are approved refs
+      const approved = refDatabase.filter(r => r.approved);
+      if (approved.length) {
+        const banner = document.getElementById('recalc-banner');
+        if (banner) {
+          banner.style.display = 'flex';
+          document.getElementById('recalc-ref-count').textContent = approved.length;
+          document.getElementById('recalc-last-update').textContent = 'Cargado desde guardado';
+        }
+        updateResumenPatronIndicator(approved.length);
+      }
     }
   } catch(e) {}
 }
