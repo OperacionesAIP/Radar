@@ -1299,12 +1299,12 @@ body:not(.edit-mode) .status-select{pointer-events:none}
   </div>
 
   <!-- Patrón activo + botón recalcular -->
-  <div id="recalc-banner" style="display:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;padding:14px 18px;margin-bottom:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+  <div id="recalc-banner" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <div style="color:#fff">
-      <div style="font-weight:700;font-size:.9rem">🧬 Patrón actualizado con <span id="recalc-ref-count">0</span> referencias</div>
-      <div style="font-size:.76rem;opacity:.8;margin-top:3px">Última actualización: <span id="recalc-last-update">—</span></div>
+      <div style="font-weight:700;font-size:.9rem">🧬 Patrón con <span id="recalc-ref-count">0</span> referencias — <span id="recalc-status-msg" style="opacity:.85;font-weight:400">Agrega referencias en la pestaña 🧬 para enriquecer el análisis</span></div>
+      <div style="font-size:.76rem;opacity:.7;margin-top:3px">Última actualización: <span id="recalc-last-update">—</span></div>
     </div>
-    <button id="recalc-btn" onclick="recalcularTodos()" style="background:var(--accent);border:none;color:#fff;padding:9px 18px;border-radius:6px;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#c94e00'" onmouseout="this.style.background='var(--accent)'">
+    <button id="recalc-btn" onclick="recalcularTodos()" style="background:var(--accent);border:none;color:#fff;padding:9px 18px;border-radius:6px;font-size:.82rem;font-weight:700;cursor:pointer">
       🔄 Recalcular todos los CVs
     </button>
   </div>
@@ -2523,9 +2523,10 @@ function updatePatronFromRefs() {
   // Update recalc banner
   const banner = document.getElementById('recalc-banner');
   if (banner) {
-    banner.style.display = 'flex';
     document.getElementById('recalc-ref-count').textContent = approved.length;
     document.getElementById('recalc-last-update').textContent = new Date().toLocaleString('es-MX', { dateStyle:'short', timeStyle:'short' });
+    const msg = document.getElementById('recalc-status-msg');
+    if (msg) msg.textContent = approved.length > 0 ? `— Listo para recalcular ${cvDatabase.filter(c=>c.status==='done').length} CVs` : 'Agrega referencias en la pestaña 🧬 para enriquecer el análisis';
   }
 
   // Update resumen ejecutivo indicator
@@ -2646,12 +2647,10 @@ function loadRefDatabase() {
       // Show banner if there are approved refs
       const approved = refDatabase.filter(r => r.approved);
       if (approved.length) {
-        const banner = document.getElementById('recalc-banner');
-        if (banner) {
-          banner.style.display = 'flex';
-          document.getElementById('recalc-ref-count').textContent = approved.length;
-          document.getElementById('recalc-last-update').textContent = 'Cargado desde guardado';
-        }
+        document.getElementById('recalc-ref-count').textContent = approved.length;
+        document.getElementById('recalc-last-update').textContent = 'Cargado desde guardado';
+        const msg = document.getElementById('recalc-status-msg');
+        if (msg) msg.textContent = `— Listo para recalcular ${cvDatabase.filter(c=>c.status==='done').length} CVs`;
         updateResumenPatronIndicator(approved.length);
       }
     }
