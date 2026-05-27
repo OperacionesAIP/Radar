@@ -471,6 +471,15 @@ body:not(.edit-mode) .status-select{pointer-events:none}
     </div>
   </div>
 
+  <!-- Indicador de patrón activo -->
+  <div id="patron-indicator-resumen" style="display:none;background:linear-gradient(135deg,var(--success),#52b788);border-radius:10px;padding:12px 18px;margin-bottom:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div style="color:#fff">
+      <span style="font-weight:700;font-size:.9rem">🧬 Patrón vivo — </span>
+      <span style="font-size:.88rem"><span id="patron-indicator-count">0</span> referencias activas modificando el análisis</span>
+    </div>
+    <button onclick="showTab('tab-referencias')" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:#fff;padding:5px 14px;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer">Ver Referencias →</button>
+  </div>
+
   <!-- Gráficas -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px">
     <div class="card">
@@ -1289,16 +1298,22 @@ body:not(.edit-mode) .status-select{pointer-events:none}
     <div class="cv-stat orange"><strong id="stat-pending">0</strong> Por analizar</div>
   </div>
 
+  <!-- Patrón activo + botón recalcular -->
+  <div id="recalc-banner" style="display:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div style="color:#fff">
+      <div style="font-weight:700;font-size:.9rem">🧬 Patrón actualizado con <span id="recalc-ref-count">0</span> referencias</div>
+      <div style="font-size:.76rem;opacity:.8;margin-top:3px">Última actualización: <span id="recalc-last-update">—</span></div>
+    </div>
+    <button id="recalc-btn" onclick="recalcularTodos()" style="background:var(--accent);border:none;color:#fff;padding:9px 18px;border-radius:6px;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .15s" onmouseover="this.style.background='#c94e00'" onmouseout="this.style.background='var(--accent)'">
+      🔄 Recalcular todos los CVs
+    </button>
+  </div>
+
   <div class="cv-drop-zone" id="cvDropZone">
     <input type="file" accept=".pdf" multiple onchange="handleCVFiles(event)">
     <div class="cv-drop-icon">📄</div>
     <div class="cv-drop-title">Arrastra los CVs aquí o haz clic para seleccionar</div>
     <div class="cv-drop-sub">Acepta múltiples PDFs — Claude los analiza automáticamente y los clasifica por fit</div>
-  </div>
-  <div style="background:#e8f0fe;border-left:4px solid var(--primary);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:.8rem;color:#444;line-height:1.6">
-    <strong style="color:var(--primary)">💡 Para que el análisis funcione</strong> abre el archivo desde un servidor local, no con doble clic.<br>
-    En PowerShell ejecuta: <code style="background:#fff;padding:2px 7px;border-radius:4px;font-family:monospace;color:var(--accent)">python -m http.server 8080</code>
-    luego abre <code style="background:#fff;padding:2px 7px;border-radius:4px;font-family:monospace;color:var(--accent)">http://localhost:8080/Dashboard_Contratacion_v2.html</code>
   </div>
 
   <div class="cv-grid" id="cv-grid">
@@ -2023,10 +2038,19 @@ function renderCVCard(cv) {
   } else {
     const fortalezasHtml = cv.fortalezas.map(f => `<span class="cv-tag">${f}</span>`).join('');
     const banderasHtml = cv.banderas.map(b => `<span class="cv-tag red">⚠ ${b}</span>`).join('');
+
+    const fitDiff = cv.fitAnterior !== undefined && cv.fitAnterior !== cv.fit
+      ? `<span style="font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:8px;margin-left:6px;background:${cv.fit > cv.fitAnterior ? '#e8f5e9' : '#fdecea'};color:${cv.fit > cv.fitAnterior ? 'var(--success)' : 'var(--danger)'}">
+          ${cv.fit > cv.fitAnterior ? '▲' : '▼'} ${Math.abs(cv.fit - cv.fitAnterior)}% vs anterior
+         </span>` : '';
+
+    const cambioNote = cv.cambioPatron
+      ? `<div style="margin-top:6px;padding:6px 10px;background:#f0f3f8;border-radius:6px;font-size:.76rem;color:var(--muted);line-height:1.5">🧬 ${cv.cambioPatron}</div>` : '';
+
     card.innerHTML = `
       <div class="cv-card-header">
         <div>
-          <div class="cv-card-name">${cv.name}</div>
+          <div class="cv-card-name">${cv.name}${fitDiff}</div>
           <div class="cv-card-file">📄 ${cv.fileName}</div>
         </div>
         <span class="cv-status-badge done">✓ Analizado</span>
@@ -2037,6 +2061,7 @@ function renderCVCard(cv) {
       </div>
       ${cv.area ? `<div class="cv-section"><div class="cv-section-title">Área sugerida</div><div class="cv-section-body">🏭 ${cv.area}</div></div>` : ''}
       <div class="cv-section"><div class="cv-section-title">Resumen</div><div class="cv-section-body">${cv.resumen}</div></div>
+      ${cambioNote}
       ${fortalezasHtml ? `<div class="cv-section"><div class="cv-section-title">Fortalezas</div><div class="cv-tags">${fortalezasHtml}</div></div>` : ''}
       ${banderasHtml ? `<div class="cv-section"><div class="cv-section-title">Banderas rojas</div><div class="cv-tags">${banderasHtml}</div></div>` : ''}
       <div class="cv-card-actions">
@@ -2478,7 +2503,6 @@ function deleteRef(id) {
 }
 
 function updatePatronFromRefs() {
-  // Build dynamic patron text from approved references
   const approved = refDatabase.filter(r => r.approved);
   if (!approved.length) return;
 
@@ -2486,23 +2510,112 @@ function updatePatronFromRefs() {
   const danos  = approved.filter(r => r.score <= 4);
 
   let patronDinamico = '\n\n--- PATRÓN ACTUALIZADO DESDE REFERENCIAS REALES ---\n';
-
   if (exitos.length) {
     patronDinamico += '\nREFERENCIAS DE ÉXITO COMPROBADO:\n';
-    exitos.forEach(r => {
-      patronDinamico += `- ${r.code} (${r.score}/10)${r.area ? ` [${r.area}]` : ''}: ${r.context}\n`;
-    });
+    exitos.forEach(r => { patronDinamico += `- ${r.code} (${r.score}/10)${r.area ? ` [${r.area}]` : ''}: ${r.context}\n`; });
   }
-
   if (danos.length) {
     patronDinamico += '\nREFERENCIAS DE DAÑO COMPROBADO:\n';
-    danos.forEach(r => {
-      patronDinamico += `- ${r.code} (${r.score}/10)${r.area ? ` [${r.area}]` : ''}: ${r.context}\n`;
-    });
+    danos.forEach(r => { patronDinamico += `- ${r.code} (${r.score}/10)${r.area ? ` [${r.area}]` : ''}: ${r.context}\n`; });
+  }
+  window.PATRON_DINAMICO = patronDinamico;
+
+  // Update recalc banner
+  const banner = document.getElementById('recalc-banner');
+  if (banner) {
+    banner.style.display = 'flex';
+    document.getElementById('recalc-ref-count').textContent = approved.length;
+    document.getElementById('recalc-last-update').textContent = new Date().toLocaleString('es-MX', { dateStyle:'short', timeStyle:'short' });
   }
 
-  // Update the PATRON_EXITO used in CV analysis
-  window.PATRON_DINAMICO = patronDinamico;
+  // Update resumen ejecutivo indicator
+  updateResumenPatronIndicator(approved.length);
+}
+
+function updateResumenPatronIndicator(count) {
+  let el = document.getElementById('patron-indicator-resumen');
+  if (!el) return;
+  if (count === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'flex';
+  el.querySelector('#patron-indicator-count').textContent = count;
+}
+
+async function recalcularTodos() {
+  const done = cvDatabase.filter(c => c.status === 'done');
+  if (!done.length) { alert('No hay CVs analizados para recalcular.'); return; }
+  if (!window.PATRON_DINAMICO) { alert('Primero aprueba al menos una referencia en la pestaña 🧬 Referencias.'); return; }
+
+  const btn = document.getElementById('recalc-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Recalculando...';
+
+  let recalcCount = 0;
+
+  for (const cv of done) {
+    // Mark as recalculating
+    const oldFit = cv.fit;
+    cv.status = 'analyzing';
+    renderCVCard(cv);
+
+    try {
+      const prompt = `Eres un experto en recursos humanos. Analiza este resumen de candidato y responde SOLO con un objeto JSON válido.
+
+Candidato: ${cv.name}
+Área sugerida: ${cv.area}
+Resumen previo: ${cv.resumen}
+Fortalezas: ${cv.fortalezas.join(', ')}
+Banderas rojas: ${cv.banderas.join(', ')}
+
+Recalcula el fit considerando el patrón actualizado:
+${PATRON_EXITO}${window.PATRON_DINAMICO || ''}
+
+Responde SOLO con este JSON:
+{
+  "fit": número del 0 al 100,
+  "resumen": "2-3 oraciones actualizadas",
+  "fortalezas": ["máximo 4 palabras clave"],
+  "banderas_rojas": ["máximo 3 señales de riesgo"],
+  "cambio": "Una frase explicando por qué el fit cambió (o no cambió) con las nuevas referencias"
+}`;
+
+      const response = await fetch('https://radar-api.operaciones-e37.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 600,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      const data = await response.json();
+      const text = data.content?.[0]?.text || '';
+      const result = JSON.parse(text.replace(/```json|```/g,'').trim());
+
+      const newFit = Math.min(100, Math.max(0, parseInt(result.fit) || cv.fit));
+      cv.fitAnterior = oldFit;
+      cv.fit = newFit;
+      cv.resumen = result.resumen || cv.resumen;
+      cv.fortalezas = result.fortalezas || cv.fortalezas;
+      cv.banderas = result.banderas_rojas || cv.banderas;
+      cv.cambioPatron = result.cambio || '';
+      cv.status = 'done';
+      recalcCount++;
+
+    } catch(e) {
+      cv.fit = oldFit;
+      cv.status = 'done';
+    }
+
+    renderCVCard(cv);
+    await new Promise(r => setTimeout(r, 300)); // small delay between calls
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🔄 Recalcular todos los CVs';
+  updateCVStats();
+  updateDashboardKPIs();
+  saveCVDatabase();
+  alert(`✓ ${recalcCount} CVs recalculados con el patrón actualizado.`);
 }
 
 function saveRefDatabase() {
