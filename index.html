@@ -351,7 +351,41 @@ body:not(.edit-mode) .status-select{pointer-events:none}
 .mode-banner strong{font-size:.9rem}
 .mode-switch-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:#fff;padding:5px 12px;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer;transition:background .15s}
 .mode-switch-btn:hover{background:rgba(255,255,255,.3)}
-/* ── SPLASH SCREEN ── */
+/* Hide header and tabs when splash/analysis is showing */
+body.splash-active .header,
+body.splash-active .tab-nav,
+body.splash-active .save-status,
+body.analysis-active .header,
+body.analysis-active .tab-nav,
+body.analysis-active .save-status { display:none !important; }
+.analysis-screen{position:fixed;inset:0;background:#fafafa;z-index:9998;display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;transition:opacity .4s ease}
+.analysis-screen.active{display:flex}
+.analysis-screen.hiding{opacity:0;pointer-events:none}
+
+.analysis-card{background:#fff;border-radius:16px;box-shadow:0 4px 32px rgba(0,0,0,.08);padding:40px;max-width:520px;width:100%;text-align:center}
+.analysis-spinner{width:48px;height:48px;border:3px solid #f0f0f0;border-top-color:#1a3c5e;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 24px}
+.analysis-filename{font-size:.76rem;color:#bbb;letter-spacing:.5px;margin-bottom:8px}
+.analysis-status{font-size:1rem;font-weight:600;color:#333;margin-bottom:6px}
+.analysis-substatus{font-size:.8rem;color:#aaa}
+
+.result-card{background:#fff;border-radius:16px;box-shadow:0 4px 32px rgba(0,0,0,.08);padding:36px;max-width:520px;width:100%;animation:fadeUp .4s ease both}
+.result-fit-big{font-size:4rem;font-weight:800;line-height:1;margin:16px 0 4px}
+.result-fit-label{font-size:.82rem;color:#aaa;margin-bottom:24px}
+.result-bar{height:8px;background:#f0f0f0;border-radius:4px;margin-bottom:28px;overflow:hidden}
+.result-bar-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.result-area{font-size:.78rem;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.result-area-val{font-size:.95rem;font-weight:600;color:#1a3c5e;margin-bottom:20px}
+.result-summary{font-size:.84rem;color:#555;line-height:1.7;text-align:left;margin-bottom:20px;padding:16px;background:#f8f8f8;border-radius:8px}
+.result-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;justify-content:center}
+.result-tag{padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:600}
+.result-tag.pos{background:#e8f5e9;color:#2d6a4f}
+.result-tag.neg{background:#fdecea;color:#c1121f}
+.result-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.result-action-primary{flex:1;padding:12px;background:#1a3c5e;color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
+.result-action-primary:hover{background:#2a5f8f}
+.result-action-secondary{padding:12px 18px;background:#fff;color:#666;border:1px solid #e8e8e8;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.result-action-secondary:hover{border-color:#1a3c5e;color:#1a3c5e}
+.result-logo{font-size:.66rem;color:#ccc;letter-spacing:2px;text-transform:uppercase;margin-top:28px}
 .splash{position:fixed;inset:0;background:#fafafa;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;transition:opacity .5s ease,transform .5s ease}
 .splash.hiding{opacity:0;transform:translateY(-12px);pointer-events:none}
 .splash.hidden{display:none}
@@ -418,7 +452,7 @@ body:not(.edit-mode) .status-select{pointer-events:none}
 .cv-stat.orange strong{color:var(--accent)}
 </style>
 </head>
-<body>
+<body class="splash-active">
 
 <!-- ══ SPLASH SCREEN ══ -->
 <div class="splash" id="splash">
@@ -445,6 +479,35 @@ body:not(.edit-mode) .status-select{pointer-events:none}
   </div>
 
   <div class="splash-footer">operacionesaip &nbsp;·&nbsp; mayo 2026</div>
+</div>
+
+<!-- ══ ANALYSIS SCREEN ══ -->
+<div class="analysis-screen" id="analysisScreen">
+  <div id="analysis-processing" class="analysis-card">
+    <div class="analysis-spinner"></div>
+    <div class="analysis-filename" id="analysis-filename">archivo.pdf</div>
+    <div class="analysis-status">Claude está comparando el CV con el Patrón General de empleados de Alto Impacto Publicidad</div>
+    <div class="analysis-substatus">Evaluando experiencia, señales de fit y banderas rojas...</div>
+  </div>
+
+  <div id="analysis-result" style="display:none;width:100%;max-width:520px">
+    <div class="result-card">
+      <div class="analysis-filename" id="result-filename">archivo.pdf</div>
+      <div class="result-fit-big" id="result-fit">—</div>
+      <div class="result-fit-label">fit con el patrón de éxito</div>
+      <div class="result-bar"><div class="result-bar-fill" id="result-bar-fill"></div></div>
+      <div class="result-area">Área sugerida</div>
+      <div class="result-area-val" id="result-area">—</div>
+      <div class="result-summary" id="result-summary">—</div>
+      <div class="result-tags" id="result-tags-pos"></div>
+      <div class="result-tags" id="result-tags-neg"></div>
+      <div class="result-actions">
+        <button class="result-action-primary" onclick="saveResultAndEnter('rec')">⭐ Agregar a Recomendados</button>
+        <button class="result-action-secondary" onclick="saveResultAndEnter('bank')">Ver en Banco de CVs</button>
+      </div>
+      <div class="result-logo">Radar de Contratación</div>
+    </div>
+  </div>
 </div>
 
 <div class="header">
@@ -2870,40 +2933,105 @@ function saveCasoEstudio() {
 function returnToSplash() {
   const splash = document.getElementById('splash');
   splash.classList.remove('hidden', 'hiding');
+  document.body.classList.add('splash-active');
   document.getElementById('splash-analyzing').style.display = 'none';
+  const screen = document.getElementById('analysisScreen');
+  screen.classList.remove('active', 'hiding');
+  document.body.classList.remove('analysis-active');
 }
 
 // ── SPLASH SCREEN ──
 function enterDashboard(tabId) {
   const splash = document.getElementById('splash');
   splash.classList.add('hiding');
+  document.body.classList.remove('splash-active');
   setTimeout(() => {
     splash.classList.add('hidden');
     if (tabId) showTab(tabId);
   }, 500);
 }
 
+let splashCVResult = null;
+
 async function handleSplashFiles(event) {
   const files = Array.from(event.target.files);
   if (!files.length) return;
-  const analyzing = document.getElementById('splash-analyzing');
-  analyzing.style.display = 'block';
-  // Enter dashboard and go to CV bank
+  const file = files[0];
+
+  // Hide splash
   const splash = document.getElementById('splash');
   splash.classList.add('hiding');
-  setTimeout(async () => {
-    splash.classList.add('hidden');
-    showTab('tab-cvs');
-    document.getElementById('cv-empty').style.display = 'none';
-    for (const file of files) {
-      const id = 'cv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
-      const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', fit: 0, area: '', fortalezas: [], banderas: [], resumen: '' };
-      cvDatabase.push(cvEntry);
-      renderCVCard(cvEntry);
+  setTimeout(() => splash.classList.add('hidden'), 500);
+  document.body.classList.remove('splash-active');
+
+  // Show analysis screen — no header, no tabs
+  const screen = document.getElementById('analysisScreen');
+  screen.classList.add('active');
+  document.body.classList.add('analysis-active');
+  document.getElementById('analysis-filename').textContent = file.name;
+  document.getElementById('analysis-processing').style.display = 'block';
+  document.getElementById('analysis-result').style.display = 'none';
+
+  const id = 'cv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+  const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', fit: 0, area: '', fortalezas: [], banderas: [], resumen: '' };
+  cvDatabase.push(cvEntry);
+
+  await analyzeCV(file, cvEntry);
+
+  splashCVResult = cvEntry;
+  showAnalysisResult(cvEntry);
+  event.target.value = '';
+}
+
+function showAnalysisResult(cv) {
+  document.getElementById('analysis-processing').style.display = 'none';
+  document.getElementById('analysis-result').style.display = 'block';
+
+  const fitColor = cv.fit >= 70 ? '#2d6a4f' : cv.fit >= 40 ? '#b5860a' : '#c1121f';
+  const barColor = cv.fit >= 70
+    ? 'linear-gradient(90deg,#2d6a4f,#52b788)'
+    : cv.fit >= 40
+    ? 'linear-gradient(90deg,#b5860a,#e9c46a)'
+    : 'linear-gradient(90deg,#c1121f,#e63946)';
+
+  document.getElementById('result-filename').textContent = cv.fileName;
+  const fitEl = document.getElementById('result-fit');
+  fitEl.textContent = cv.status === 'error' ? '—' : cv.fit + '%';
+  fitEl.style.color = fitColor;
+  document.getElementById('result-area').textContent = cv.area || 'Sin definir';
+  document.getElementById('result-summary').textContent = cv.resumen || 'No se pudo analizar el CV.';
+
+  const bar = document.getElementById('result-bar-fill');
+  bar.style.width = '0%';
+  bar.style.background = barColor;
+  setTimeout(() => { bar.style.width = cv.fit + '%'; }, 100);
+
+  document.getElementById('result-tags-pos').innerHTML =
+    (cv.fortalezas || []).map(f => `<span class="result-tag pos">${f}</span>`).join('');
+  document.getElementById('result-tags-neg').innerHTML =
+    (cv.banderas || []).map(b => `<span class="result-tag neg">⚠ ${b}</span>`).join('');
+
+  const primaryBtn = document.querySelector('.result-action-primary');
+  if (cv.fit >= 70) primaryBtn.textContent = '⭐ Agregar a Recomendados';
+  else if (cv.fit >= 40) primaryBtn.textContent = '🔍 Agregar a En Consideración';
+  else primaryBtn.textContent = '📁 Agregar a Archivo';
+}
+
+function saveResultAndEnter(action) {
+  const screen = document.getElementById('analysisScreen');
+  screen.classList.add('hiding');
+  document.body.classList.remove('analysis-active');
+  setTimeout(() => {
+    screen.classList.remove('active', 'hiding');
+    if (splashCVResult) {
+      renderCVCard(splashCVResult);
       updateCVStats();
-      await analyzeCV(file, cvEntry);
+      updateDashboardKPIs();
+      if (action === 'rec') addCVToRecomendados(splashCVResult.id);
+      saveCVDatabase();
+      splashCVResult = null;
     }
-    event.target.value = '';
+    showTab('tab-cvs');
   }, 400);
 }
 
@@ -2917,6 +3045,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── INIT ──
+document.body.classList.add('splash-active');
 loadData();
 loadCVDatabase();
 loadRefDatabase();
