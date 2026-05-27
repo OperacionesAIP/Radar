@@ -351,6 +351,28 @@ body:not(.edit-mode) .status-select{pointer-events:none}
 .mode-banner strong{font-size:.9rem}
 .mode-switch-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);color:#fff;padding:5px 12px;border-radius:6px;font-size:.76rem;font-weight:700;cursor:pointer;transition:background .15s}
 .mode-switch-btn:hover{background:rgba(255,255,255,.3)}
+/* ── SPLASH SCREEN ── */
+.splash{position:fixed;inset:0;background:#fafafa;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;transition:opacity .5s ease,transform .5s ease}
+.splash.hiding{opacity:0;transform:translateY(-12px);pointer-events:none}
+.splash.hidden{display:none}
+.splash-logo{font-size:.72rem;font-weight:700;letter-spacing:4px;color:#bbb;text-transform:uppercase;margin-bottom:52px}
+.splash-title{font-size:2.6rem;font-weight:800;color:#1a3c5e;margin-bottom:8px;text-align:center;line-height:1.2}
+.splash-sub{font-size:.9rem;color:#aaa;margin-bottom:56px;text-align:center;font-weight:400;letter-spacing:.3px}
+.splash-drop{border:1.5px dashed #d0d0d0;border-radius:16px;padding:52px 72px;text-align:center;cursor:pointer;position:relative;transition:all .25s;background:#fff;max-width:460px;width:100%;box-shadow:0 2px 20px rgba(0,0,0,.04)}
+.splash-drop:hover,.splash-drop.drag-over{border-color:#1a3c5e;background:#f0f3f8;box-shadow:0 4px 24px rgba(26,60,94,.08)}
+.splash-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.splash-drop-icon{font-size:1.8rem;margin-bottom:14px;opacity:.35}
+.splash-drop-title{font-size:.95rem;font-weight:600;color:#444;margin-bottom:6px}
+.splash-drop-sub{font-size:.76rem;color:#bbb}
+.splash-analyzing{font-size:.82rem;color:#1a3c5e;margin-top:14px;display:none}
+.splash-divider{display:flex;align-items:center;gap:14px;margin:24px 0;max-width:460px;width:100%}
+.splash-divider::before,.splash-divider::after{content:'';flex:1;height:1px;background:#ebebeb}
+.splash-divider span{font-size:.68rem;color:#ccc;letter-spacing:1.5px;text-transform:uppercase}
+.splash-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:460px;width:100%}
+.splash-action-btn{padding:9px 18px;border:1px solid #e8e8e8;border-radius:8px;background:#fff;font-size:.76rem;font-weight:600;color:#666;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.2px}
+.splash-action-btn:hover{border-color:#1a3c5e;color:#1a3c5e;background:#f5f7fc}
+.splash-footer{position:absolute;bottom:24px;font-size:.66rem;color:#ddd;letter-spacing:2px;text-transform:uppercase}
+
 .cv-drop-zone{border:2.5px dashed var(--primary);border-radius:14px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#f8faff;margin-bottom:24px;position:relative}
 .cv-drop-zone:hover,.cv-drop-zone.drag-over{border-color:var(--accent);background:#fff5f0;transform:scale(1.01)}
 .cv-drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -398,6 +420,33 @@ body:not(.edit-mode) .status-select{pointer-events:none}
 </head>
 <body>
 
+<!-- ══ SPLASH SCREEN ══ -->
+<div class="splash" id="splash">
+  <div class="splash-logo">Radar de Contratación</div>
+  <div class="splash-title">Arrastra un CV.</div>
+  <div class="splash-sub">Lo que necesitas saber en segundos.</div>
+
+  <div class="splash-drop" id="splashDrop">
+    <input type="file" accept=".pdf" multiple onchange="handleSplashFiles(event)">
+    <div class="splash-drop-icon">📄</div>
+    <div class="splash-drop-title">Suelta el PDF aquí</div>
+    <div class="splash-drop-sub">o haz clic para seleccionar</div>
+    <div class="splash-analyzing" id="splash-analyzing">⏳ Analizando...</div>
+  </div>
+
+  <div class="splash-divider"><span>o</span></div>
+
+  <div class="splash-actions">
+    <button class="splash-action-btn" onclick="enterDashboard('tab-cvs')">📂 Banco de CVs</button>
+    <button class="splash-action-btn" onclick="enterDashboard('tab-referencias')">🧬 Referencias</button>
+    <button class="splash-action-btn" onclick="enterDashboard('tab-resumen')">📊 Resumen</button>
+    <button class="splash-action-btn" onclick="enterDashboard('tab-contratados')">👥 Contratados</button>
+    <button class="splash-action-btn" onclick="enterDashboard('tab-miguel')">📖 Casos</button>
+  </div>
+
+  <div class="splash-footer">operacionesaip &nbsp;·&nbsp; mayo 2026</div>
+</div>
+
 <div class="header">
   <div>
     <h1 class="editable" contenteditable="false" id="header-title">Radar de Contratación</h1>
@@ -405,6 +454,7 @@ body:not(.edit-mode) .status-select{pointer-events:none}
   </div>
   <div class="header-right">
     <div class="header-badge editable" contenteditable="false" id="header-badge">Alto Impacto</div>
+    <button class="settings-btn" onclick="returnToSplash()" title="Volver a inicio" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3)">⌂</button>
     <button class="settings-btn" onclick="toggleSettings()">⚙️ Ajustes</button>
     <button class="edit-toggle" id="editToggle" onclick="toggleEdit()">✏️ Modo Edición</button>
   </div>
@@ -2816,6 +2866,55 @@ function saveCasoEstudio() {
   scheduleSave();
   showTab('tab-miguel');
 }
+
+function returnToSplash() {
+  const splash = document.getElementById('splash');
+  splash.classList.remove('hidden', 'hiding');
+  document.getElementById('splash-analyzing').style.display = 'none';
+}
+
+// ── SPLASH SCREEN ──
+function enterDashboard(tabId) {
+  const splash = document.getElementById('splash');
+  splash.classList.add('hiding');
+  setTimeout(() => {
+    splash.classList.add('hidden');
+    if (tabId) showTab(tabId);
+  }, 500);
+}
+
+async function handleSplashFiles(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  const analyzing = document.getElementById('splash-analyzing');
+  analyzing.style.display = 'block';
+  // Enter dashboard and go to CV bank
+  const splash = document.getElementById('splash');
+  splash.classList.add('hiding');
+  setTimeout(async () => {
+    splash.classList.add('hidden');
+    showTab('tab-cvs');
+    document.getElementById('cv-empty').style.display = 'none';
+    for (const file of files) {
+      const id = 'cv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+      const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', fit: 0, area: '', fortalezas: [], banderas: [], resumen: '' };
+      cvDatabase.push(cvEntry);
+      renderCVCard(cvEntry);
+      updateCVStats();
+      await analyzeCV(file, cvEntry);
+    }
+    event.target.value = '';
+  }, 400);
+}
+
+// Drag over visual on splash
+document.addEventListener('DOMContentLoaded', () => {
+  const drop = document.getElementById('splashDrop');
+  if (!drop) return;
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag-over'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag-over'); });
+});
 
 // ── INIT ──
 loadData();
