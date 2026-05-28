@@ -450,6 +450,38 @@ body.analysis-active .save-status { display:none !important; }
 .cv-stat strong{font-size:1.2rem;color:var(--primary)}
 .cv-stat.green strong{color:var(--success)}
 .cv-stat.orange strong{color:var(--accent)}
+
+/* ── HISTORY PANEL ── */
+.hist-btn{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);color:var(--primary);padding:7px 14px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s}
+.hist-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.hist-btn .hist-badge{background:var(--accent);color:#fff;border-radius:10px;padding:1px 6px;font-size:.68rem;font-weight:800;min-width:16px;text-align:center}
+#hist-panel{position:fixed;top:0;right:-380px;width:360px;height:100vh;background:var(--card);box-shadow:-4px 0 24px rgba(0,0,0,.15);z-index:9999;display:flex;flex-direction:column;transition:right .3s cubic-bezier(.4,0,.2,1)}
+#hist-panel.open{right:0}
+#hist-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9998;opacity:0;pointer-events:none;transition:opacity .3s}
+#hist-overlay.open{opacity:1;pointer-events:all}
+.hist-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hist-header h3{margin:0;font-size:.95rem;font-weight:800;color:var(--primary)}
+.hist-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);line-height:1;padding:4px}
+.hist-list{flex:1;overflow-y:auto;padding:12px}
+.hist-item{display:flex;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s;margin-bottom:4px;border:1.5px solid transparent}
+.hist-item:hover{background:#f0f4ff;border-color:var(--primary-light)}
+.hist-item.current{background:#e8f5e9;border-color:var(--success)}
+.hist-item.current .hist-item-label::after{content:' · ACTUAL';font-size:.63rem;color:var(--success);font-weight:800;letter-spacing:.5px}
+.hist-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.hist-dot.cv{background:#2a5f8f}
+.hist-dot.ref{background:#2d6a4f}
+.hist-dot.status{background:#e85d04}
+.hist-dot.edit{background:#6c757d}
+.hist-dot.delete{background:#c1121f}
+.hist-item-body{flex:1;min-width:0}
+.hist-item-label{font-size:.8rem;font-weight:600;color:var(--text);line-height:1.3}
+.hist-item-time{font-size:.68rem;color:var(--muted);margin-top:2px}
+.hist-item-tab{font-size:.65rem;background:#f0f0f0;color:var(--muted);padding:1px 6px;border-radius:6px;display:inline-block;margin-top:3px}
+.hist-restore-btn{font-size:.7rem;background:var(--primary);color:#fff;border:none;border-radius:5px;padding:3px 9px;cursor:pointer;opacity:0;transition:opacity .15s;flex-shrink:0;align-self:center}
+.hist-item:hover .hist-restore-btn{opacity:1}
+.hist-item.current .hist-restore-btn{display:none}
+.hist-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:.82rem}
+.hist-footer{padding:12px 16px;border-top:1px solid var(--border);font-size:.72rem;color:var(--muted);flex-shrink:0}
 </style>
 </head>
 <body class="splash-active">
@@ -677,31 +709,21 @@ body.analysis-active .save-status { display:none !important; }
       <div class="area-icon editable" contenteditable="false">🔧</div>
       <div class="area-name editable" contenteditable="false">Taller</div>
       <div class="area-desc editable-block" contenteditable="false">Trabajo físico, tareas pesadas, maquinaria polivalente. Requiere resistencia, velocidad y actitud de servicio.</div>
-      <div style="margin-top:9px;" class="area-activos">
-        <span class="badge badge-success person-badge" data-id="p1">José Luis García — Activo</span> 
-        <span class="badge badge-success person-badge" data-id="p4">Cristóbal Jiménez — Activo</span> 
-        <span class="badge badge-success person-badge" data-id="p3">Lautaro Lugo — Activo</span>
-      </div>
+      <div style="margin-top:9px;" class="area-activos"></div>
     </div>
     <div class="area-card">
       <button class="del-btn" title="Eliminar tarjeta">×</button>
       <div class="area-icon editable" contenteditable="false">🖨️</div>
       <div class="area-name editable" contenteditable="false">Impresión / Plotter</div>
       <div class="area-desc editable-block" contenteditable="false">Manejo de plotter gran formato, impresión digital, diseño básico. Resiliencia a jornadas largas clave.</div>
-      <div style="margin-top:9px;" class="area-activos">
-        <span class="badge badge-success person-badge" data-id="p2">David Armendáriz — Activo</span>
-      </div>
+      <div style="margin-top:9px;" class="area-activos"></div>
     </div>
     <div class="area-card">
       <button class="del-btn" title="Eliminar tarjeta">×</button>
       <div class="area-icon editable" contenteditable="false">🖥️</div>
       <div class="area-name editable" contenteditable="false">Diseño 3D / Digital</div>
       <div class="area-desc editable-block" contenteditable="false">CAD, modelado 3D, diseño digital. Combinación de habilidades técnicas + adaptación a cultura.</div>
-      <div style="margin-top:9px;" class="area-activos">
-        <span class="badge badge-success person-badge" data-id="p5">Octavio Barba — Activo</span> 
-        <span class="badge badge-success person-badge" data-id="p6">Fernando Ehrenzweig — Activo</span> 
-        <span class="badge badge-success person-badge" data-id="p7">Pedro Reyes — Activo</span>
-      </div>
+      <div style="margin-top:9px;" class="area-activos"></div>
     </div>
     <button class="add-card-btn" onclick="addAreaCard()">+ Agregar área</button>
   </div>
@@ -721,7 +743,7 @@ body.analysis-active .save-status { display:none !important; }
         <li><span class="li-text editable" contenteditable="false">Resistencia a jornadas largas sin queja</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Velocidad de ejecución en taller</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Trabajo pesado sin fricción</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Ejemplos: José Luis García, David Armendáriz</span><button class="del-btn" title="Eliminar">×</button></li>
+        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
       </ul>
       <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
     </div>
@@ -732,7 +754,7 @@ body.analysis-active .save-status { display:none !important; }
         <li><span class="li-text editable" contenteditable="false">Atención a instrucciones</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Disposición sin cuestionamientos</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Integración natural al equipo</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Ejemplos: Cristóbal Jiménez, Gerardo Meraz</span><button class="del-btn" title="Eliminar">×</button></li>
+        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
       </ul>
       <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
     </div>
@@ -743,7 +765,7 @@ body.analysis-active .save-status { display:none !important; }
         <li><span class="li-text editable" contenteditable="false">CAD y modelado 3D</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Diseño digital básico o avanzado</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Manejo de software creativo</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Ejemplos: Octavio Barba, Fernando Ehrenzweig</span><button class="del-btn" title="Eliminar">×</button></li>
+        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
       </ul>
       <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
     </div>
@@ -754,7 +776,7 @@ body.analysis-active .save-status { display:none !important; }
         <li><span class="li-text editable" contenteditable="false">Adaptación a múltiples tareas</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">No se "encajona" en un solo rol</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Aprende rápido nuevas operaciones</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Ejemplo: Lautaro Lugo</span><button class="del-btn" title="Eliminar">×</button></li>
+        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
       </ul>
       <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
     </div>
@@ -765,7 +787,7 @@ body.analysis-active .save-status { display:none !important; }
         <li><span class="li-text editable" contenteditable="false">Ingenieros con historial ultra-especializado</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Expectativas de rol formal/estructurado</span><button class="del-btn" title="Eliminar">×</button></li>
         <li><span class="li-text editable" contenteditable="false">Frustración con tareas polivalentes</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Caso documentado: Miguel Antonio Ramos</span><button class="del-btn" title="Eliminar">×</button></li>
+        <li><span class="li-text editable" contenteditable="false">Agrega casos documentados de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
       </ul>
       <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
     </div>
@@ -853,7 +875,10 @@ body.analysis-active .save-status { display:none !important; }
 
 <!-- ===== TAB 3: CONTRATADOS ===== -->
 <div class="tab-content" id="tab-contratados">
-  <div class="section-title">Historial completo de contrataciones (mayo 2026)</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div class="section-title" style="margin:0">Historial completo de contrataciones (mayo 2026)</div>
+    <button class="hist-btn" onclick="openHistPanel()" title="Ver historial de cambios">🕑 Historial <span class="hist-badge">0</span></button>
+  </div>
   <div class="timeline" id="timeline">
 
   </div>
@@ -879,6 +904,7 @@ body.analysis-active .save-status { display:none !important; }
 <!-- ===== TAB 5: RECOMENDADOS ===== -->
 <div class="tab-content" id="tab-recomendados">
 
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="hist-btn" onclick="openHistPanel()" title="Ver historial de cambios">🕑 Historial <span class="hist-badge">0</span></button></div>
   <div class="rec-section">
     <h3>🔧 Taller — Candidatos recomendados</h3>
     <div class="rec-grid" id="rec-taller">
@@ -914,6 +940,7 @@ body.analysis-active .save-status { display:none !important; }
     <button class="mode-switch-btn" onclick="toggleRefMode()">Cambiar a Manual</button>
   </div>
 
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="hist-btn" onclick="openHistPanel()" title="Ver historial de cambios">🕑 Historial <span class="hist-badge">0</span></button></div>
   <div class="ref-stats">
     <div class="ref-stat green"><strong id="stat-ref-exito">0</strong> Referencias de Éxito</div>
     <div class="ref-stat red"><strong id="stat-ref-dano">0</strong> Referencias de Daño</div>
@@ -988,6 +1015,7 @@ body.analysis-active .save-status { display:none !important; }
     <div class="cv-stat"><strong id="stat-total">0</strong> CVs cargados</div>
     <div class="cv-stat green"><strong id="stat-fit">0</strong> Alto fit (≥70%)</div>
     <div class="cv-stat orange"><strong id="stat-pending">0</strong> Por analizar</div>
+    <div class="cv-stat" style="margin-left:auto"><button class="hist-btn" onclick="openHistPanel()" title="Ver historial de cambios">🕑 Historial <span class="hist-badge">0</span></button></div>
   </div>
 
   <!-- Patrón activo + botón recalcular -->
@@ -1049,25 +1077,191 @@ body.analysis-active .save-status { display:none !important; }
 let editMode = false;
 let saveTimer = null;
 let chartFit = null;
+
+// ══ HISTORY ENGINE ══
+const MAX_HISTORY = 50;
+let historyStack = [];   // [{id, ts, label, tab, dot, snapshot}]
+let currentHistIdx = -1; // apunta al estado actual
+
+function captureSnapshot() {
+  return {
+    cvDatabase:   JSON.stringify(cvDatabase),
+    refDatabase:  JSON.stringify(refDatabase),
+    tabsHTML:     (() => {
+      const o = {};
+      ['tab-contratados','tab-recomendados','tab-consideracion','tab-archivo','tab-patron'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) o[id] = el.innerHTML;
+      });
+      return o;
+    })()
+  };
+}
+
+function pushHistory(label, tab, dot = 'edit') {
+  // Trim forward history if we restored to a past point
+  if (currentHistIdx < historyStack.length - 1) {
+    historyStack = historyStack.slice(0, currentHistIdx + 1);
+  }
+  const snap = {
+    id:    'h' + Date.now(),
+    ts:    new Date(),
+    label,
+    tab,
+    dot,
+    snapshot: captureSnapshot()
+  };
+  historyStack.push(snap);
+  if (historyStack.length > MAX_HISTORY) historyStack.shift();
+  currentHistIdx = historyStack.length - 1;
+  renderHistPanel();
+}
+
+function restoreSnapshot(idx) {
+  const entry = historyStack[idx];
+  if (!entry) return;
+
+  if (!confirm(`¿Restaurar al estado "${entry.label}"?
+${formatHistTime(entry.ts)}
+
+Se revertirán todos los cambios posteriores.`)) return;
+
+  const snap = entry.snapshot;
+
+  // Restore cvDatabase
+  try { cvDatabase = JSON.parse(snap.cvDatabase); } catch(e) {}
+
+  // Restore refDatabase
+  try { refDatabase = JSON.parse(snap.refDatabase); } catch(e) {}
+
+  // Restore tab HTML
+  if (snap.tabsHTML) {
+    Object.entries(snap.tabsHTML).forEach(([id, html]) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = html;
+    });
+  }
+
+  // Re-render CV bank
+  const grid = document.getElementById('cv-grid');
+  if (grid) {
+    grid.innerHTML = '<div class="cv-empty" id="cv-empty"><div class="cv-empty-icon">📂</div><div>Aún no hay CVs cargados.</div></div>';
+    const emptyEl = document.getElementById('cv-empty');
+    if (emptyEl) emptyEl.style.display = cvDatabase.length ? 'none' : '';
+    cvDatabase.forEach(cv => renderCVCard(cv));
+  }
+
+  // Re-render references
+  const refGrid = document.getElementById('ref-grid');
+  if (refGrid) {
+    refGrid.innerHTML = '<div class="cv-empty" id="ref-empty"><div class="cv-empty-icon">🧬</div><div>Aún no hay referencias.</div></div>';
+    refDatabase.forEach(ref => renderRefCard(ref));
+  }
+
+  updateCVStats();
+  updateRefStats();
+  updateDashboardKPIs();
+  renderPatronPreview();
+  saveCVDatabase();
+  scheduleSave();
+
+  currentHistIdx = idx;
+  renderHistPanel();
+  closeHistPanel();
+
+  // Toast
+  showHistToast(`↩ Restaurado: ${entry.label}`);
+}
+
+function formatHistTime(ts) {
+  const d = ts instanceof Date ? ts : new Date(ts);
+  return d.toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'medium' });
+}
+
+function formatHistTimeShort(ts) {
+  const d = ts instanceof Date ? ts : new Date(ts);
+  const now = new Date();
+  const diff = Math.floor((now - d) / 1000);
+  if (diff < 60)  return 'hace ' + diff + 's';
+  if (diff < 3600) return 'hace ' + Math.floor(diff/60) + 'min';
+  return d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+}
+
+const TAB_NAMES = {
+  'tab-cvs':          '📂 Banco de CVs',
+  'tab-recomendados': '⭐ Recomendados',
+  'tab-consideracion':'🔍 En Consideración',
+  'tab-archivo':      '📁 Archivo',
+  'tab-contratados':  '👥 Contratados',
+  'tab-referencias':  '🧬 Referencias',
+  'tab-patron':       '🧬 Patrón',
+};
+
+function renderHistPanel() {
+  const list = document.getElementById('hist-list');
+  const footer = document.getElementById('hist-footer');
+  const empty = document.getElementById('hist-empty');
+  if (!list) return;
+
+  if (!historyStack.length) {
+    if (empty) empty.style.display = '';
+    if (footer) footer.textContent = '0 cambios registrados en esta sesión';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  list.innerHTML = [...historyStack].reverse().map((e, revIdx) => {
+    const realIdx = historyStack.length - 1 - revIdx;
+    const isCurrent = realIdx === currentHistIdx;
+    return `<div class="hist-item ${isCurrent ? 'current' : ''}" onclick="restoreSnapshot(${realIdx})">
+      <div class="hist-dot ${e.dot}"></div>
+      <div class="hist-item-body">
+        <div class="hist-item-label">${e.label}</div>
+        <div class="hist-item-time">${formatHistTime(e.ts)}</div>
+        ${e.tab ? `<span class="hist-item-tab">${TAB_NAMES[e.tab] || e.tab}</span>` : ''}
+      </div>
+      <button class="hist-restore-btn" onclick="event.stopPropagation();restoreSnapshot(${realIdx})">Restaurar</button>
+    </div>`;
+  }).join('');
+
+  if (footer) footer.textContent = `${historyStack.length} cambio${historyStack.length!==1?'s':''} registrado${historyStack.length!==1?'s':''} · máx ${MAX_HISTORY}`;
+
+  // Update all hist-badges
+  document.querySelectorAll('.hist-badge').forEach(b => b.textContent = historyStack.length);
+}
+
+function openHistPanel() {
+  document.getElementById('hist-panel').classList.add('open');
+  document.getElementById('hist-overlay').classList.add('open');
+}
+function closeHistPanel() {
+  document.getElementById('hist-panel').classList.remove('open');
+  document.getElementById('hist-overlay').classList.remove('open');
+}
+
+function showHistToast(msg) {
+  let toast = document.getElementById('hist-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'hist-toast';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 20px;border-radius:10px;font-size:.82rem;font-weight:700;z-index:10000;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:opacity .3s';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+}
+// ══ END HISTORY ENGINE ══
+
+
 let chartArea = null;
 
 // ══════════════════════════════════════════════
 // ESTADO CENTRAL — única fuente de verdad
 // Cambiar aquí se refleja en TODOS los lugares
 // ══════════════════════════════════════════════
-const PERSONAS = {
-  p1:  { nombre: 'José Luis García',     status: 'success' },
-  p2:  { nombre: 'David Armendáriz',     status: 'success' },
-  p3:  { nombre: 'Lautaro Lugo',         status: 'success' },
-  p4:  { nombre: 'Cristóbal Jiménez',    status: 'success' },
-  p5:  { nombre: 'Octavio Barba',        status: 'success' },
-  p6:  { nombre: 'Fernando Ehrenzweig',  status: 'success' },
-  p7:  { nombre: 'Pedro Antonio Reyes',  status: 'success' },
-  p8:  { nombre: 'Gloria Flores',        status: 'neutral' },
-  p9:  { nombre: 'Gerardo Meraz',        status: 'neutral' },
-  p10: { nombre: 'Miguel Antonio Ramos', status: 'danger'  },
-  p11: { nombre: 'Enrique Schum',        status: 'warning' },
-};
+const PERSONAS = {};
 
 const STATUS_MAP = {
   success: { badgeClass: 'badge-success', tableLabel: 'Activo ✓',     areaSuffix: '— Activo'        },
@@ -1111,6 +1305,9 @@ function renderStatus(id) {
 function updateStatusStyle(sel) {
   const id = sel.dataset.id;
   if (!id || !PERSONAS[id]) return;
+  const statusLabels = { success: 'Activo ✓', neutral: 'Salió — personal', danger: 'Salió — Inconformidad ⚠️', warning: 'No concretado' };
+  const nombre = sel.closest('.tl-card')?.querySelector('.tl-name')?.textContent?.trim() || id;
+  pushHistory(`👤 Estado: ${nombre} → ${statusLabels[sel.value] || sel.value}`, 'tab-contratados', 'status');
   PERSONAS[id].status = sel.value;
   renderStatus(id);
   scheduleSave();
@@ -1671,7 +1868,6 @@ Patrón de personas exitosas en esta empresa (manufactura, Torreón/Durango):
 - Sin experiencia en empresas muy estructuradas (Caterpillar, Milwaukee, CEMEX) que generen expectativas de rol formal
 - Para diseño 3D: dominio de CAD, portafolio, actitud de mejora continua
 - Para impresión/plotter: perfil híbrido técnico-creativo, resiliencia
-- Ejemplos de éxito: José Luis García (taller), David Armendáriz (plotter), Lautaro Lugo (maquinaria), Octavio Barba (diseño 3D)
 `;
 
 function updateCVStats() {
@@ -1872,6 +2068,11 @@ Un fit bajo (<50) significa riesgo de rotación o inconformidad.`;
     cvEntry.fortalezas = result.fortalezas || [];
     cvEntry.banderas = result.banderas_rojas || [];
     cvEntry.status = 'done';
+    const patronActivo = !!(window.PATRON_DINAMICO && window.PATRON_DINAMICO.trim());
+    const histLabel = patronActivo
+      ? `📄 CV analizado: ${cvEntry.name} — ${cvEntry.fitBase}% base / ${cvEntry.fit}% con patrón`
+      : `📄 CV analizado: ${cvEntry.name} — ${cvEntry.fit}% fit`;
+    pushHistory(histLabel, 'tab-cvs', 'cv');
 
   } catch (err) {
     cvEntry.status = 'error';
@@ -1885,6 +2086,8 @@ Un fit bajo (<50) significa riesgo de rotación o inconformidad.`;
 }
 
 function deleteCVCard(id) {
+  const cv = cvDatabase.find(c => c.id === id);
+  if (cv) pushHistory(`🗑 CV eliminado: ${cv.name}`, 'tab-cvs', 'delete');
   cvDatabase = cvDatabase.filter(c => c.id !== id);
   const el = document.getElementById(id);
   if (el) { el.style.animation = 'fadeUp .2s ease reverse'; setTimeout(() => el.remove(), 200); }
@@ -1957,6 +2160,8 @@ function addCVToRecomendados(id) {
   const btn = document.getElementById('add-btn-' + id);
   if (btn) { btn.textContent = '✓ Agregado'; btn.disabled = true; }
 
+  const tabLabels = {'tab-recomendados':'Recomendados','tab-consideracion':'En Consideración','tab-archivo':'Archivo'};
+  pushHistory(`📋 ${cv.name} → ${tabLabels[targetTab] || targetTab} (${cv.fit}%)`, targetTab, 'cv');
   scheduleSave();
   showTab(targetTab);
   setTimeout(() => showTab('tab-cvs'), 1800);
@@ -2297,6 +2502,7 @@ Ejemplo de respuesta: ["polivalente","arraigo local","trabajo físico","sin pret
   }
 
   ref.approved = true;
+  pushHistory(`✅ Referencia aprobada: ${ref.code || 'nueva'} (${ref.score}/10)${ref.area ? ' · ' + ref.area : ''}`, 'tab-referencias', 'ref');
 
   // If auto mode, update PATRON_EXITO immediately
   if (refMode === 'auto') updatePatronFromRefs();
@@ -2309,6 +2515,8 @@ Ejemplo de respuesta: ["polivalente","arraigo local","trabajo físico","sin pret
 
 function deleteRef(id) {
   if (!confirm('¿Eliminar esta referencia? Se quitará del patrón.')) return;
+  const ref = refDatabase.find(r => r.id === id);
+  if (ref) pushHistory(`🗑 Referencia eliminada: ${ref.code || ref.fileName} (${ref.score}/10)`, 'tab-referencias', 'delete');
   refDatabase = refDatabase.filter(r => r.id !== id);
   const el = document.getElementById(id);
   if (el) el.remove();
@@ -2434,6 +2642,7 @@ Responde SOLO con este JSON:
   updateCVStats();
   updateDashboardKPIs();
   saveCVDatabase();
+  pushHistory(`🔄 Recalcular: ${recalcCount} CVs actualizados con patrón dinámico`, 'tab-cvs', 'ref');
   alert(`✓ ${recalcCount} CVs recalculados con el patrón actualizado.`);
 }
 
@@ -2745,5 +2954,19 @@ loadData();
 loadCVDatabase();
 loadRefDatabase();
 </script>
+
+<!-- ══ HISTORY PANEL ══ -->
+<div id="hist-overlay" onclick="closeHistPanel()"></div>
+<div id="hist-panel">
+  <div class="hist-header">
+    <h3>🕑 Historial de cambios</h3>
+    <button class="hist-close" onclick="closeHistPanel()" title="Cerrar">×</button>
+  </div>
+  <div class="hist-list" id="hist-list">
+    <div class="hist-empty" id="hist-empty">Aún no hay cambios registrados.<br>Los cambios aparecerán aquí automáticamente.</div>
+  </div>
+  <div class="hist-footer" id="hist-footer">0 cambios registrados en esta sesión</div>
+</div>
+
 </body>
 </html>
