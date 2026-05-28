@@ -1092,19 +1092,19 @@ let editMode = false;
 let saveTimer = null;
 let chartFit = null;
 
-// ── Keyword helpers — acepta string legacy o {kw,cat} nuevo formato ──
+// Keyword helpers - acepta string legacy o {kw,cat} nuevo formato
 function kwText(k)  { return (typeof k === 'object' && k !== null) ? k.kw  : k; }
 function kwCat(k)   { return (typeof k === 'object' && k !== null) ? k.cat : 'actitud'; }
 const CAT_COLORS = {
   actitud:  { bg: '#e8f0fe', color: '#1a3c5e',  label: 'Actitud'  },
-  fisico:   { bg: '#fff3e0', color: '#b5860a',  label: 'Físico'   },
-  tecnico:  { bg: '#f3e8ff', color: '#6d28d9',  label: 'Técnico'  },
+  fisico:   { bg: '#fff3e0', color: '#b5860a',  label: 'Fisico'   },
+  tecnico:  { bg: '#f3e8ff', color: '#6d28d9',  label: 'Tecnico'  },
   social:   { bg: '#e8f5e9', color: '#2d6a4f',  label: 'Social'   },
   riesgo:   { bg: '#fdecea', color: '#c1121f',  label: 'Riesgo'   },
 };
 
 
-// ══ HISTORY ENGINE ══
+// HISTORY ENGINE
 const MAX_HISTORY = 50;
 let historyStack = [];   // [{id, ts, label, tab, dot, snapshot}]
 let currentHistIdx = -1; // apunta al estado actual
@@ -1279,15 +1279,15 @@ function showHistToast(msg) {
   clearTimeout(toast._t);
   toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
 }
-// ══ END HISTORY ENGINE ══
+// END HISTORY ENGINE
 
 
 let chartArea = null;
 
-// ══════════════════════════════════════════════
+// ==============================================
 // ESTADO CENTRAL — única fuente de verdad
 // Cambiar aquí se refleja en TODOS los lugares
-// ══════════════════════════════════════════════
+// ==============================================
 const PERSONAS = {};
 
 const STATUS_MAP = {
@@ -1340,7 +1340,7 @@ function updateStatusStyle(sel) {
   scheduleSave();
 }
 
-// ── KPI COUNTER ANIMATION ──
+// -- KPI COUNTER ANIMATION --
 function animateCounters() {
   document.querySelectorAll('.kpi-num[data-target]').forEach(el => {
     const target = parseInt(el.dataset.target);
@@ -1358,7 +1358,7 @@ function animateCounters() {
   });
 }
 
-// ── SETTINGS PANEL ──
+// -- SETTINGS PANEL --
 function toggleSettings() {
   const panel = document.getElementById('settingsPanel');
   const overlay = document.getElementById('settingsOverlay');
@@ -1383,7 +1383,7 @@ function applySettings() {
   scheduleSave();
 }
 
-// ── EXPORT / IMPORT JSON ──
+// -- EXPORT / IMPORT JSON --
 function exportJSON() {
   const data = { _statuses: {}, _header: {}, _tabs: {} };
   // Guardar estados
@@ -1444,7 +1444,7 @@ function applyImportedData(data) {
   renderAllStatuses();
 }
 
-// ── SAVE / LOAD ──
+// -- SAVE / LOAD --
 function scheduleSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveData, 1500);
@@ -1508,7 +1508,7 @@ function resetData() {
   }
 }
 
-// ── EDIT MODE ──
+// -- EDIT MODE --
 function toggleEdit() {
   editMode = !editMode;
   document.body.classList.toggle('edit-mode', editMode);
@@ -1551,7 +1551,7 @@ function updateBar(el) {
   }
 }
 
-// ── DELETE ──
+// -- DELETE --
 document.addEventListener('click', function(e) {
   if (!editMode) return;
   if (e.target.matches('.del-btn')) {
@@ -1566,7 +1566,7 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ── ADD FUNCTIONS ──
+// -- ADD FUNCTIONS --
 function addTableRow(tbodyId) {
   const tbody = document.getElementById(tbodyId);
   const tr = document.createElement('tr');
@@ -1709,7 +1709,7 @@ function addPerfilItem(btn) {
   scheduleSave();
 }
 
-// ── DASHBOARD KPIs + CHARTS ──
+// -- DASHBOARD KPIs + CHARTS --
 function updateDashboardKPIs() {
   const done = cvDatabase.filter(c => c.status === 'done');
   const rec   = done.filter(c => c.fit >= 70).length;
@@ -1740,7 +1740,7 @@ function renderEdadMetrics(done) {
   wrap.style.display = 'block';
   title.style.display = 'flex';
 
-  // ── Distribución por rangos ──
+  // -- Distribución por rangos --
   const rangos = [
     { label: '18–24 años', min: 18, max: 24, color: '#2a5f8f' },
     { label: '25–29 años', min: 25, max: 29, color: '#1a3c5e' },
@@ -1769,7 +1769,7 @@ function renderEdadMetrics(done) {
     }).join('');
   }
 
-  // ── Edad promedio: Recomendados vs En Consideración vs Archivados ──
+  // -- Edad promedio: Recomendados vs En Consideración vs Archivados --
   const grupos = [
     { label: '⭐ Recomendados (≥70%)', color: 'var(--success)', bg: '#e8f5e9', cvs: conEdad.filter(c => c.fit >= 70) },
     { label: '🔍 En Consideración (40-69%)', color: '#b5860a', bg: '#fff8e1', cvs: conEdad.filter(c => c.fit >= 40 && c.fit < 70) },
@@ -1819,7 +1819,7 @@ function filterCVBank(query) {
 }
 
 
-// ══ PATRON GENERAL — construcción dinámica desde referencias ══
+// PATRON GENERAL - construccion dinamica desde referencias
 let patronGeneralFilter = 'all';
 
 function setPatronFilter(f) {
@@ -1936,10 +1936,10 @@ function renderPatronGeneral() {
   // Re-apply filter
   setPatronFilter(patronGeneralFilter);
 }
-// ══ END PATRON GENERAL ══
+// END PATRON GENERAL
 
 
-// ══ INTELIGENCIA DEL PATRÓN ══
+// INTELIGENCIA DEL PATRON
 function renderInteligenciaPatron() {
   const approved = refDatabase.filter(r => r.approved && r.context);
   const empty   = document.getElementById('intel-empty');
@@ -1962,7 +1962,7 @@ function renderInteligenciaPatron() {
   document.getElementById('intel-exito-count').textContent = exitos.length;
   document.getElementById('intel-dano-count').textContent  = danos.length;
 
-  // ── Frecuency helpers ──
+  // -- Frecuency helpers --
   const freqMap = (entries) => {
     const m = {};
     entries.forEach(kw => { if(kw && kw.trim()) m[kw] = (m[kw]||0)+1; });
@@ -1980,7 +1980,7 @@ function renderInteligenciaPatron() {
   const negExitoFreq = freqMap(negInExito);
   const negDanoFreq  = freqMap(negInDano);
 
-  // ── ANÁLISIS 1: Tolerancia del puesto ──
+  // -- ANÁLISIS 1: Tolerancia del puesto --
   // Negativas que aparecen en éxitos — ordenadas por frecuencia
   const tolerancias = Object.entries(negExitoFreq)
     .sort((a,b) => b[1]-a[1])
@@ -2006,7 +2006,7 @@ function renderInteligenciaPatron() {
     tolEl.style.display    = 'none';
   }
 
-  // ── ANÁLISIS 2: Señales de riesgo universales ──
+  // -- ANÁLISIS 2: Señales de riesgo universales --
   // Negativas que aparecen en AMBOS grupos — éxitos y daños
   const universales = Object.entries(negExitoFreq)
     .filter(([kw]) => negDanoFreq[kw])
@@ -2030,11 +2030,10 @@ function renderInteligenciaPatron() {
     riesgoEl.style.display    = 'none';
   }
 
-  // ── ANÁLISIS 3: Brecha ideal vs real ──
+  // -- ANÁLISIS 3: Brecha ideal vs real --
   // Parse PATRON_EXITO into criteria keywords
   const patronLines = PATRON_EXITO
-    .split('
-')
+    .split('\n')
     .map(l => l.replace(/^[-•]\s*/, '').trim())
     .filter(l => l.length > 8 && !l.startsWith('Patrón') && !l.startsWith('Para '));
 
@@ -2073,10 +2072,10 @@ function renderInteligenciaPatron() {
         </div>`).join('')
     : '<div style="font-size:.76rem;color:var(--success);padding:8px">✓ Todos los criterios tienen evidencia</div>';
 }
-// ══ END INTELIGENCIA DEL PATRÓN ══
+// END INTELIGENCIA DEL PATRON
 
 function renderCharts(rec, cons, arch, done) {
-  // ── Chart 1: Fit distribution (doughnut) ──
+  // -- Chart 1: Fit distribution (doughnut) --
   const ctxFit = document.getElementById('chart-fit');
   if (!ctxFit) return;
   if (chartFit) chartFit.destroy();
@@ -2102,7 +2101,7 @@ function renderCharts(rec, cons, arch, done) {
     }
   });
 
-  // ── Chart 2: By area (horizontal bar) ──
+  // -- Chart 2: By area (horizontal bar) --
   const ctxArea = document.getElementById('chart-area');
   if (!ctxArea) return;
   if (chartArea) chartArea.destroy();
@@ -2141,7 +2140,7 @@ function renderCharts(rec, cons, arch, done) {
   });
 }
 
-// ── CV BANK ──
+// CV BANK
 let cvDatabase = [];
 
 const PATRON_EXITO = `
@@ -2493,9 +2492,9 @@ document.addEventListener('DOMContentLoaded', () => {
   zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); });
 });
 
-// ══════════════════════════════════════════════
+// ==============================================
 // REFERENCIAS — Memoria institucional
-// ══════════════════════════════════════════════
+// ==============================================
 let refDatabase = [];
 let refMode = 'auto'; // 'auto' | 'manual'
 
@@ -3042,7 +3041,7 @@ function loadRefDatabase() {
   } catch(e) {}
 }
 
-// ── CASOS DE ESTUDIO ──
+// -- CASOS DE ESTUDIO --
 let casoCounter = 1; // starts at 2 since caso 001 exists
 
 function addCasoEstudio() {
@@ -3140,7 +3139,7 @@ function returnToSplash() {
   document.body.classList.remove('analysis-active');
 }
 
-// ── SPLASH SCREEN ──
+// -- SPLASH SCREEN --
 function enterDashboard(tabId) {
   const splash = document.getElementById('splash');
   splash.classList.add('hiding');
@@ -3306,7 +3305,7 @@ document.addEventListener('DOMContentLoaded', () => {
   drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag-over'); });
 });
 
-// ── INIT ──
+// -- INIT --
 document.body.classList.add('splash-active');
 loadData();
 loadCVDatabase();
