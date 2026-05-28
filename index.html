@@ -611,29 +611,6 @@ body.analysis-active .save-status { display:none !important; }
 <!-- ===== TAB 1: RESUMEN ===== -->
 <div class="tab-content active" id="tab-resumen">
 
-  <div class="kpi-grid">
-    <div class="kpi-card animate-fade-up">
-      <div class="kpi-num editable" contenteditable="false" data-target="183">183</div>
-      <div class="kpi-label editable" contenteditable="false">CVs Analizados</div>
-    </div>
-    <div class="kpi-card accent animate-fade-up">
-      <div class="kpi-num editable" contenteditable="false" data-target="10">10</div>
-      <div class="kpi-label editable" contenteditable="false">Contratados</div>
-    </div>
-    <div class="kpi-card success animate-fade-up">
-      <div class="kpi-num editable" contenteditable="false" data-target="7">7</div>
-      <div class="kpi-label editable" contenteditable="false">Activos actualmente</div>
-    </div>
-    <div class="kpi-card danger animate-fade-up">
-      <div class="kpi-num editable" contenteditable="false" data-target="3">3</div>
-      <div class="kpi-label editable" contenteditable="false">Salidas (no disciplinarias)</div>
-    </div>
-    <div class="kpi-card warning animate-fade-up">
-      <div class="kpi-num editable" contenteditable="false" data-target="1">1</div>
-      <div class="kpi-label editable" contenteditable="false">No concretado</div>
-    </div>
-  </div>
-
   <!-- KPIs dinámicos del banco de CVs -->
   <div class="section-title">Banco de CVs — Estado actual</div>
   <div class="kpi-grid" style="margin-bottom:22px">
@@ -729,114 +706,7 @@ body.analysis-active .save-status { display:none !important; }
     <button class="add-card-btn" onclick="addAreaCard()">+ Agregar área</button>
   </div>
 
-  <div class="section-title">Resumen de candidatos evaluados para contratación</div>
-  <div class="card">
-    <div class="table-wrap">
-      <table id="tabla-resumen">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Área asignada</th>
-            <th>Rendimiento / Nota</th>
-            <th>Status</th>
-            <th>Motivo salida</th>
-            <th class="row-del"></th>
-          </tr>
-        </thead>
-        <tbody id="tabla-resumen-body">
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Gloria Flores</strong></td>
-            <td class="editable" contenteditable="false">Sin especificar</td>
-            <td class="editable" contenteditable="false">Excepcional — 3 meses</td>
-            <td><span class="badge badge-neutral person-badge" data-id="p8">Salió</span></td>
-            <td class="editable" contenteditable="false">Motivos personales</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Miguel Antonio Ramos</strong></td>
-            <td class="editable" contenteditable="false">Taller</td>
-            <td class="editable" contenteditable="false">Muy bueno técnicamente</td>
-            <td><span class="badge badge-danger person-badge" data-id="p10">Salió</span></td>
-            <td class="editable" contenteditable="false">Inconformidad con actividades</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Gerardo Meraz</strong></td>
-            <td class="editable" contenteditable="false">Impresión</td>
-            <td class="editable" contenteditable="false">Excelente integración equipo</td>
-            <td><span class="badge badge-neutral person-badge" data-id="p9">Salió</span></td>
-            <td class="editable" contenteditable="false">Temas familiares</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Lautaro Lugo</strong></td>
-            <td class="editable" contenteditable="false">Maquinaria</td>
-            <td class="editable" contenteditable="false">Alta adaptabilidad, muy versátil</td>
-            <td><span class="badge badge-success person-badge" data-id="p3">Activo ✓</span></td>
-            <td class="editable" contenteditable="false">—</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Cristóbal Jiménez</strong></td>
-            <td class="editable" contenteditable="false">Taller (tareas pesadas)</td>
-            <td class="editable" contenteditable="false">Muy servicial, atento a instrucciones</td>
-            <td><span class="badge badge-success person-badge" data-id="p4">Activo ✓</span></td>
-            <td class="editable" contenteditable="false">—</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Octavio Barba</strong></td>
-            <td class="editable" contenteditable="false">Diseño 3D</td>
-            <td class="editable" contenteditable="false">Muchas habilidades 3D</td>
-            <td><span class="badge badge-success person-badge" data-id="p5">Activo ✓</span></td>
-            <td class="editable" contenteditable="false">—</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Fernando Ehrenzweig</strong></td>
-            <td class="editable" contenteditable="false">Diseño</td>
-            <td class="editable" contenteditable="false">Buena adaptación + mejora continua</td>
-            <td><span class="badge badge-success person-badge" data-id="p6">Activo ✓</span></td>
-            <td class="editable" contenteditable="false">—</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>José Luis García</strong></td>
-            <td class="editable" contenteditable="false">Taller</td>
-            <td class="editable" contenteditable="false">Virtuoso físicamente, velocidad excepcional</td>
-            <td><span class="badge badge-success person-badge" data-id="p1">Activo ✓</span></td>
-            <td class="editable" contenteditable="false">—</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>David Armendáriz</strong></td>
-            <td class="editable" contenteditable="false">Plotter / Impresión</td>
-            <td class="editable" contenteditable="false">Genial en plotter, resiliencia jornadas largas</td>
-            <td><span class="badge badge-success person-badge" data-id="p2">Activo ✓</span></td>
-            <td class="editable" contenteditable="false">—</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr>
-            <td class="editable" contenteditable="false"><strong>Pedro Antonio Reyes</strong></td>
-            <td class="editable" contenteditable="false">Técnico avanzado</td>
-            <td class="editable" contenteditable="false">Amplio conocimiento técnicas avanzadas</td>
-            <td><span class="badge badge-success person-badge" data-id="p7">Activo ✓</span></td>
-            <td class="editable" contenteditable="false">—</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-          <tr style="background:#fff8e1">
-            <td class="editable" contenteditable="false"><strong>Enrique Schum</strong></td>
-            <td class="editable" contenteditable="false">Sin especificar</td>
-            <td class="editable" contenteditable="false">Perfil muy interesante</td>
-            <td><span class="badge badge-warning person-badge" data-id="p11">No concretado</span></td>
-            <td class="editable" contenteditable="false">Proceso no finalizado</td>
-            <td class="row-del"><button class="del-btn" title="Eliminar fila">×</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <button class="add-item-btn" onclick="addTableRow('tabla-resumen-body')">+ Agregar persona</button>
-  </div>
+</div>
 </div>
 
 <!-- ===== TAB 2: PATRÓN ===== -->
@@ -1483,11 +1353,48 @@ body.analysis-active .save-status { display:none !important; }
     <div class="cv-drop-sub">Éxitos comprobados o casos de daño — ambos construyen el patrón</div>
   </div>
 
-  <div id="ref-patron-preview" style="display:none">
-    <div class="patron-preview">
-      <h4>🧬 Patrón activo — construido con <span id="patron-count">0</span> referencias</h4>
-      <div id="patron-exito-tags"></div>
-      <div id="patron-dano-tags"></div>
+  <div id="ref-patron-preview" style="display:none;margin-bottom:18px">
+    <div class="patron-preview" style="padding:0;overflow:hidden;border-radius:12px">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg,var(--primary),var(--primary-light));padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="color:#fff;font-weight:800;font-size:.95rem">🧬 ADN del patrón — <span id="patron-count">0</span> referencias</div>
+          <div style="color:rgba(255,255,255,.75);font-size:.72rem;margin-top:2px">Se actualiza cada vez que apruebas una referencia</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span id="patron-evol-badge" style="background:rgba(255,255,255,.15);color:#fff;padding:4px 10px;border-radius:10px;font-size:.72rem;font-weight:700"></span>
+        </div>
+      </div>
+      <!-- Body -->
+      <div style="padding:16px 20px;background:var(--card)">
+        <!-- Radar chart -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div>
+            <div style="font-size:.72rem;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">✓ Señales de éxito</div>
+            <div id="patron-exito-tags" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+          </div>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;color:var(--danger);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">⚠ Señales de daño</div>
+            <div id="patron-dano-tags" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+          </div>
+        </div>
+        <!-- Timeline de mutación -->
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📈 Historial de mutaciones</div>
+          <div id="patron-timeline" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto"></div>
+        </div>
+        <!-- Barra de fuerza del patrón -->
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
+          <div style="display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;margin-bottom:6px">
+            <span>Fuerza del patrón</span>
+            <span id="patron-fuerza-pct" style="color:var(--primary);font-weight:800">0%</span>
+          </div>
+          <div style="background:#f0f0f0;border-radius:6px;height:10px;overflow:hidden">
+            <div id="patron-fuerza-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--success));border-radius:6px;transition:width .8s cubic-bezier(.4,0,.2,1)"></div>
+          </div>
+          <div style="font-size:.68rem;color:var(--muted);margin-top:4px">Basado en cantidad y diversidad de referencias aprobadas</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1517,6 +1424,16 @@ body.analysis-active .save-status { display:none !important; }
     <button id="recalc-btn" onclick="recalcularTodos()" style="background:var(--accent);border:none;color:#fff;padding:9px 18px;border-radius:6px;font-size:.82rem;font-weight:700;cursor:pointer">
       🔄 Recalcular todos los CVs
     </button>
+  </div>
+
+  <!-- Buscador de candidatos -->
+  <div style="position:relative;margin-bottom:14px">
+    <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.95rem;pointer-events:none">🔍</span>
+    <input type="text" id="cv-search" placeholder="Buscar candidato por nombre, área o fortaleza…"
+      oninput="filterCVBank(this.value)"
+      style="width:100%;padding:10px 14px 10px 36px;border:1.5px solid var(--border);border-radius:8px;font-size:.87rem;background:var(--card);color:var(--text);outline:none;box-sizing:border-box;transition:border-color .2s"
+      onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+    <span id="cv-search-count" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.72rem;color:var(--muted);display:none"></span>
   </div>
 
   <div class="cv-drop-zone" id="cvDropZone"
@@ -2169,6 +2086,28 @@ function renderEdadMetrics(done) {
   }
 }
 
+
+function filterCVBank(query) {
+  const q = query.trim().toLowerCase();
+  const cards = document.querySelectorAll('#cv-grid .cv-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const cv = cvDatabase.find(c => c.id === card.id);
+    if (!cv) { card.style.display = ''; visible++; return; }
+    const searchText = [cv.name, cv.area, ...(cv.fortalezas||[]), ...(cv.banderas||[]), cv.resumen||''].join(' ').toLowerCase();
+    const match = !q || searchText.includes(q);
+    card.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  const countEl = document.getElementById('cv-search-count');
+  if (countEl) {
+    if (q) { countEl.textContent = visible + ' resultado' + (visible!==1?'s':''); countEl.style.display = 'block'; }
+    else { countEl.style.display = 'none'; }
+  }
+  const empty = document.getElementById('cv-empty');
+  if (empty) empty.style.display = (visible === 0 && q) ? 'block' : (cvDatabase.filter(c=>c.status==='done').length===0?'block':'none');
+}
+
 function renderCharts(rec, cons, arch, done) {
   // ── Chart 1: Fit distribution (doughnut) ──
   const ctxFit = document.getElementById('chart-fit');
@@ -2237,14 +2176,14 @@ function renderCharts(rec, cons, arch, done) {
 
 // ── CV BANK ──
 let cvDatabase = [
-  { id:'cv-maribel',    fileName:'CVMaribelCabral.pdf',                status:'done', name:'Maribel Cabral',                   edad:28,                   fit:62, area:'Recepción / Atención al cliente',  fortalezas:['Atención al cliente','Adobe Illustrator','Arraigo Torreón','Ventas'],            banderas:['Rotación alta — 6 empleos en 3 años','Sin experiencia en manufactura'],                             resumen:'Perfil de ventas y atención al cliente con arraigo local. Manejo básico de diseño (Illustrator, lonas, flyers). Sin experiencia en manufactura pero tampoco expectativas de rol especializado. Viable para recepción o apoyo administrativo.' },
-  { id:'cv-pedro',      fileName:'CVpedroaaronmacielcastorena.pdf',     status:'done', name:'Pedro Aaron Maciel Castorena',     edad:26,     fit:71, area:'Sistemas / Marketing',              fortalezas:['Versátil','Arraigo local','Sistemas + Marketing','Adaptable'],                              banderas:['Historial diverso — verificar dirección clara'],                                                    resumen:'Perfil técnico versátil — sistemas, redes, marketing, atención al cliente. Arraigo fuerte en Torreón y Gómez Palacio. Ha trabajado en entornos muy diferentes mostrando adaptabilidad. Buen candidato para sistemas o marketing interno.' },
-  { id:'cv-jaime',      fileName:'CVJAIMEgasparhernandez.pdf',          status:'done', name:'Jaime Edgardo Gaspar Hernández',   edad:25,   fit:68, area:'Supervisión / Taller avanzado',    fortalezas:['Habilidad manual','Liderazgo de cuadrilla','AutoCAD','Proactivo'],                             banderas:['Ingeniero formal — riesgo inconformidad con taller polivalente','Empleos cortos por proyecto'],     resumen:'Ingeniero civil recién egresado con experiencia supervisando cuadrillas en campo. Habilidad manual comprobable, AutoCAD, historial en entornos variables. Verificar expectativas de rol en entrevista.' },
-  { id:'cv-walter',     fileName:'CVWALTERSAHIDIBAÑEZYASSIN.pdf',       status:'done', name:'Walter Sahid Ibáñez Yassin',       edad:34,       fit:38, area:'Hospitalidad / Bar',               fortalezas:['Liderazgo','Trabajo bajo presión','Servicio al cliente'],                                        banderas:['Sin relación con manufactura','Foráneo — San Pedro NL','Perfil muy especializado en otro giro'],    resumen:'Excelente profesional en hospitalidad — bartender con 10+ años, liderazgo de equipos. Sin conexión con manufactura o diseño. No es un mal candidato, es el candidato equivocado para el contexto actual.' },
-  { id:'cv-guillermo',  fileName:'CVGuillermoSanchez.pdf',              status:'done', name:'Guillermo Sánchez Quiñones',       edad:42,       fit:32, area:'Supervisión / Ingeniería formal',  fortalezas:['Experiencia técnica sólida','Liderazgo','Arraigo Torreón','Lean Manufacturing'],              banderas:['Perfil ultra-especializado','Expectativas de ingeniería formal','Historial en empresas muy estructuradas','Riesgo alto de inconformidad'], resumen:'Ingeniero mecánico-eléctrico con maestría y 15+ años. Perfil similar al caso Miguel Ramos pero amplificado. Viene de empresas muy estructuradas. En taller polivalente generará inconformidad inmediata. Excelente profesional — contexto equivocado.' },
-  { id:'cv-francisco',  fileName:'CVJoséFranciscoEsquivelVargas.pdf',   status:'done', name:'José Francisco Esquivel Vargas',   edad:22,   fit:58, area:'Taller',                          fortalezas:['Sin pretensiones especializadas','Arraigo regional Lerdo','Experiencia física','Perfil operativo'], banderas:['Historial muy corto — un solo empleo','Solo secundaria — verificar disposición'],                   resumen:'Ayudante de soldador en CFE con arraigo en Lerdo, Durango. Sin pretensiones de rol especializado. Historial corto pero limpio. Para taller podría funcionar si en entrevista confirma actitud de servicio y tolerancia a trabajo físico.' },
-  { id:'cv-javier',     fileName:'CVJavierEduardoBernalvalladares.pdf', status:'done', name:'Javier Eduardo Bernal Valladares', edad:31, fit:74, area:'Taller / Mantenimiento',          fortalezas:['Polivalente','3 años de estabilidad','Mantenimiento general','Arraigo Torreón'],                  banderas:['Verificar disponibilidad de horario'],                                                              resumen:'3 años continuos en mantenimiento general — herrería, plomería, eléctrico, mecánico, HVAC. Perfil polivalente exactamente como lo necesita la empresa. Arraigo Torreón, sin expectativas de rol especializado. Buena estabilidad laboral.' },
-  { id:'cv-martin',     fileName:'CVMartinElihuSanchezGarcia.pdf',      status:'done', name:'Martín Elihu Sánchez García',      edad:27,      fit:72, area:'Almacén / Taller operativo',      fortalezas:['Trabajo físico comprobable','Arraigo Torreón','Disponible','Montacargas','Historial limpio'],      banderas:['Redacción de CV inusual — no relevante para el puesto'],                                            resumen:'Almacenista y montacarguista con casi 2 años en Bonafont-Danone. Trabajo físico, sin pretensiones de rol especializado, historial limpio, cartas de recomendación, disponible. Tipo de persona que entra y hace lo que se le pide.' },
+  { id:'cv-maribel',    fileName:'CVMaribelCabral.pdf',                status:'done', name:'Maribel Cabral',                   edad:28,                   fit:62, fitBase:62,area:'Recepción / Atención al cliente',  fortalezas:['Atención al cliente','Adobe Illustrator','Arraigo Torreón','Ventas'],            banderas:['Rotación alta — 6 empleos en 3 años','Sin experiencia en manufactura'],                             resumen:'Perfil de ventas y atención al cliente con arraigo local. Manejo básico de diseño (Illustrator, lonas, flyers). Sin experiencia en manufactura pero tampoco expectativas de rol especializado. Viable para recepción o apoyo administrativo.' },
+  { id:'cv-pedro',      fileName:'CVpedroaaronmacielcastorena.pdf',     status:'done', name:'Pedro Aaron Maciel Castorena',     edad:26,     fit:71, fitBase:71,area:'Sistemas / Marketing',              fortalezas:['Versátil','Arraigo local','Sistemas + Marketing','Adaptable'],                              banderas:['Historial diverso — verificar dirección clara'],                                                    resumen:'Perfil técnico versátil — sistemas, redes, marketing, atención al cliente. Arraigo fuerte en Torreón y Gómez Palacio. Ha trabajado en entornos muy diferentes mostrando adaptabilidad. Buen candidato para sistemas o marketing interno.' },
+  { id:'cv-jaime',      fileName:'CVJAIMEgasparhernandez.pdf',          status:'done', name:'Jaime Edgardo Gaspar Hernández',   edad:25,   fit:68, fitBase:68,area:'Supervisión / Taller avanzado',    fortalezas:['Habilidad manual','Liderazgo de cuadrilla','AutoCAD','Proactivo'],                             banderas:['Ingeniero formal — riesgo inconformidad con taller polivalente','Empleos cortos por proyecto'],     resumen:'Ingeniero civil recién egresado con experiencia supervisando cuadrillas en campo. Habilidad manual comprobable, AutoCAD, historial en entornos variables. Verificar expectativas de rol en entrevista.' },
+  { id:'cv-walter',     fileName:'CVWALTERSAHIDIBAÑEZYASSIN.pdf',       status:'done', name:'Walter Sahid Ibáñez Yassin',       edad:34,       fit:38, fitBase:38,area:'Hospitalidad / Bar',               fortalezas:['Liderazgo','Trabajo bajo presión','Servicio al cliente'],                                        banderas:['Sin relación con manufactura','Foráneo — San Pedro NL','Perfil muy especializado en otro giro'],    resumen:'Excelente profesional en hospitalidad — bartender con 10+ años, liderazgo de equipos. Sin conexión con manufactura o diseño. No es un mal candidato, es el candidato equivocado para el contexto actual.' },
+  { id:'cv-guillermo',  fileName:'CVGuillermoSanchez.pdf',              status:'done', name:'Guillermo Sánchez Quiñones',       edad:42,       fit:32, fitBase:32,area:'Supervisión / Ingeniería formal',  fortalezas:['Experiencia técnica sólida','Liderazgo','Arraigo Torreón','Lean Manufacturing'],              banderas:['Perfil ultra-especializado','Expectativas de ingeniería formal','Historial en empresas muy estructuradas','Riesgo alto de inconformidad'], resumen:'Ingeniero mecánico-eléctrico con maestría y 15+ años. Perfil similar al caso Miguel Ramos pero amplificado. Viene de empresas muy estructuradas. En taller polivalente generará inconformidad inmediata. Excelente profesional — contexto equivocado.' },
+  { id:'cv-francisco',  fileName:'CVJoséFranciscoEsquivelVargas.pdf',   status:'done', name:'José Francisco Esquivel Vargas',   edad:22,   fit:58, fitBase:58,area:'Taller',                          fortalezas:['Sin pretensiones especializadas','Arraigo regional Lerdo','Experiencia física','Perfil operativo'], banderas:['Historial muy corto — un solo empleo','Solo secundaria — verificar disposición'],                   resumen:'Ayudante de soldador en CFE con arraigo en Lerdo, Durango. Sin pretensiones de rol especializado. Historial corto pero limpio. Para taller podría funcionar si en entrevista confirma actitud de servicio y tolerancia a trabajo físico.' },
+  { id:'cv-javier',     fileName:'CVJavierEduardoBernalvalladares.pdf', status:'done', name:'Javier Eduardo Bernal Valladares', edad:31, fit:74, fitBase:74,area:'Taller / Mantenimiento',          fortalezas:['Polivalente','3 años de estabilidad','Mantenimiento general','Arraigo Torreón'],                  banderas:['Verificar disponibilidad de horario'],                                                              resumen:'3 años continuos en mantenimiento general — herrería, plomería, eléctrico, mecánico, HVAC. Perfil polivalente exactamente como lo necesita la empresa. Arraigo Torreón, sin expectativas de rol especializado. Buena estabilidad laboral.' },
+  { id:'cv-martin',     fileName:'CVMartinElihuSanchezGarcia.pdf',      status:'done', name:'Martín Elihu Sánchez García',      edad:27,      fit:72, fitBase:72,area:'Almacén / Taller operativo',      fortalezas:['Trabajo físico comprobable','Arraigo Torreón','Disponible','Montacargas','Historial limpio'],      banderas:['Redacción de CV inusual — no relevante para el puesto'],                                            resumen:'Almacenista y montacarguista con casi 2 años en Bonafont-Danone. Trabajo físico, sin pretensiones de rol especializado, historial limpio, cartas de recomendación, disponible. Tipo de persona que entra y hace lo que se le pide.' },
 ];
 
 const PATRON_EXITO = `
@@ -2275,7 +2214,7 @@ async function handleCVDrop(event) {
   document.getElementById('cv-empty').style.display = 'none';
   for (const file of files) {
     const id = 'cv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
-    const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', edad: null, fit: 0, area: '', fortalezas: [], banderas: [], resumen: '' };
+    const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', edad: null, fit: 0, fitBase: null, area: '', fortalezas: [], banderas: [], resumen: '' };
     cvDatabase.push(cvEntry);
     renderCVCard(cvEntry);
     updateCVStats();
@@ -2290,7 +2229,7 @@ async function handleCVFiles(event) {
 
   for (const file of files) {
     const id = 'cv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
-    const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', edad: null, fit: 0, area: '', fortalezas: [], banderas: [], resumen: '' };
+    const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', edad: null, fit: 0, fitBase: null, area: '', fortalezas: [], banderas: [], resumen: '' };
     cvDatabase.push(cvEntry);
     renderCVCard(cvEntry);
     updateCVStats();
@@ -2354,8 +2293,20 @@ function renderCVCard(cv) {
         <span class="cv-status-badge done">✓ Analizado</span>
       </div>
       <div class="cv-fit-bar-wrap">
+        ${cv.fitBase !== null && cv.fitBase !== cv.fit ? `
+        <div style="margin-bottom:8px">
+          <div class="cv-fit-label" style="margin-bottom:3px"><span style="color:var(--muted)">Sin patrón</span><span class="cv-fit-pct" style="color:var(--muted)">${cv.fitBase}%</span></div>
+          <div class="score-bar"><div class="score-fill" style="width:${cv.fitBase}%;background:linear-gradient(90deg,#b0bec5,#cfd8dc)"></div></div>
+        </div>
+        <div>
+          <div class="cv-fit-label" style="margin-bottom:3px"><span style="font-weight:700">Con patrón 🧬</span><span class="cv-fit-pct">${cv.fit}%</span></div>
+          <div class="score-bar"><div class="score-fill" style="width:${cv.fit}%;${fitBarColor}"></div></div>
+        </div>
+        <div style="font-size:.7rem;color:${cv.fit>cv.fitBase?'var(--success)':'var(--danger)'};margin-top:4px;font-weight:700;text-align:right">
+          ${cv.fit>cv.fitBase?'▲':'▼'} ${Math.abs(cv.fit-cv.fitBase)} pts con patrón dinámico
+        </div>` : `
         <div class="cv-fit-label"><span>Fit con patrón de éxito</span><span class="cv-fit-pct">${cv.fit}%</span></div>
-        <div class="score-bar"><div class="score-fill" style="width:${cv.fit}%;${fitBarColor}"></div></div>
+        <div class="score-bar"><div class="score-fill" style="width:${cv.fit}%;${fitBarColor}"></div></div>`}
       </div>
       ${cv.area ? `<div class="cv-section"><div class="cv-section-title">Área sugerida</div><div class="cv-section-body">🏭 ${cv.area}</div></div>` : ''}
       <div class="cv-section"><div class="cv-section-title">Resumen</div><div class="cv-section-body">${cv.resumen}</div></div>
@@ -2425,7 +2376,10 @@ Un fit bajo (<50) significa riesgo de rotación o inconformidad.`;
     cvEntry.name = result.nombre || file.name.replace('.pdf','');
     cvEntry.edad = (result.edad !== null && result.edad !== undefined && !isNaN(parseInt(result.edad))) ? parseInt(result.edad) : null;
     cvEntry.area = result.area_sugerida || '';
-    cvEntry.fit = Math.min(100, Math.max(0, parseInt(result.fit) || 0));
+    const fitVal = Math.min(100, Math.max(0, parseInt(result.fit) || 0));
+    cvEntry.fit = fitVal;
+    // fitBase = fit sin patrón dinámico (solo se guarda si no había patrón activo al momento del análisis)
+    if (cvEntry.fitBase === null) cvEntry.fitBase = fitVal;
     cvEntry.resumen = result.resumen || '';
     cvEntry.fortalezas = result.fortalezas || [];
     cvEntry.banderas = result.banderas_rojas || [];
@@ -2621,6 +2575,9 @@ function updateRefStats() {
   document.getElementById('stat-ref-pending').textContent = pending;
 }
 
+// Patron mutation history
+let patronHistory = [];
+
 function renderPatronPreview() {
   const approved = refDatabase.filter(r => r.approved && r.context);
   if (!approved.length) { document.getElementById('ref-patron-preview').style.display = 'none'; return; }
@@ -2636,16 +2593,87 @@ function renderPatronPreview() {
   const countTags = (arr) => {
     const m = {};
     arr.forEach(t => m[t] = (m[t]||0)+1);
-    return Object.entries(m).sort((a,b) => b[1]-a[1]).slice(0,8);
+    return Object.entries(m).sort((a,b) => b[1]-a[1]).slice(0,10);
   };
 
+  const exitoTop = countTags(exitoTags);
+  const danoTop  = countTags(danoTags);
+
+  // Tags de éxito con tamaño por frecuencia
   document.getElementById('patron-exito-tags').innerHTML =
-    '<strong style="font-size:.75rem;color:var(--success)">✓ Señales de éxito:</strong> ' +
-    countTags(exitoTags).map(([t,c]) => `<span class="patron-tag pos">${t}${c>1?` ×${c}`:''}</span>`).join('');
+    exitoTop.map(([t,c]) => {
+      const size = c >= 3 ? '1rem' : c === 2 ? '.84rem' : '.75rem';
+      const op = c >= 3 ? '1' : c === 2 ? '.85' : '.7';
+      return `<span class="patron-tag pos" style="font-size:${size};opacity:${op};animation:fadeUp .4s ease both">${t}${c>1?` <sup style='font-size:.6rem'>×${c}</sup>`:''}</span>`;
+    }).join('');
 
   document.getElementById('patron-dano-tags').innerHTML =
-    '<strong style="font-size:.75rem;color:var(--danger)">⚠ Señales de daño:</strong> ' +
-    countTags(danoTags).map(([t,c]) => `<span class="patron-tag neg">${t}${c>1?` ×${c}`:''}</span>`).join('');
+    danoTop.map(([t,c]) => {
+      const size = c >= 3 ? '1rem' : c === 2 ? '.84rem' : '.75rem';
+      const op = c >= 3 ? '1' : c === 2 ? '.85' : '.7';
+      return `<span class="patron-tag neg" style="font-size:${size};opacity:${op};animation:fadeUp .4s ease both">${t}${c>1?` <sup style='font-size:.6rem'>×${c}</sup>`:''}</span>`;
+    }).join('');
+
+  // Barra de fuerza: escala 0-100 según # referencias y diversidad
+  const totalKeywords = exitoTop.length + danoTop.length;
+  const fuerzaPct = Math.min(100, Math.round((approved.length * 8) + (totalKeywords * 2)));
+  const fuerzaBar = document.getElementById('patron-fuerza-bar');
+  const fuerzaPctEl = document.getElementById('patron-fuerza-pct');
+  if (fuerzaBar) { setTimeout(() => { fuerzaBar.style.width = fuerzaPct + '%'; }, 100); }
+  if (fuerzaPctEl) fuerzaPctEl.textContent = fuerzaPct + '%';
+
+  // Badge de evolución
+  const badge = document.getElementById('patron-evol-badge');
+  if (badge) {
+    if (approved.length >= 6) badge.textContent = '🔥 Patrón sólido';
+    else if (approved.length >= 3) badge.textContent = '🌱 Patrón en crecimiento';
+    else badge.textContent = '🔬 Patrón inicial';
+  }
+
+  // Registro de mutación en timeline
+  const now = new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+  const lastRef = approved[approved.length - 1];
+  const mutEntry = {
+    time: now,
+    total: approved.length,
+    code: lastRef.code || '—',
+    score: lastRef.score,
+    topKeyword: (lastRef.keywords || [])[0] || '—',
+    exitos: exitos.length,
+    danos: danos.length
+  };
+  // Only add if different from last entry
+  const lastHist = patronHistory[patronHistory.length - 1];
+  if (!lastHist || lastHist.total !== mutEntry.total) {
+    patronHistory.push(mutEntry);
+    if (patronHistory.length > 12) patronHistory.shift();
+  }
+
+  const timelineEl = document.getElementById('patron-timeline');
+  if (timelineEl) {
+    if (!patronHistory.length) {
+      timelineEl.innerHTML = '<div style="font-size:.75rem;color:var(--muted);font-style:italic">Sin cambios aún en esta sesión</div>';
+    } else {
+      timelineEl.innerHTML = [...patronHistory].reverse().map((e, i) => {
+        const isLatest = i === 0;
+        const scoreColor = e.score >= 7 ? 'var(--success)' : e.score <= 3 ? 'var(--danger)' : '#b5860a';
+        return `<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 10px;background:${isLatest?'#f0f4ff':'transparent'};border-radius:7px;border-left:3px solid ${isLatest?'var(--primary)':'var(--border)'};animation:fadeUp .3s ease both">
+          <div style="font-size:.68rem;color:var(--muted);white-space:nowrap;padding-top:1px;min-width:36px">${e.time}</div>
+          <div style="flex:1">
+            <div style="font-size:.78rem;font-weight:700;color:var(--text)">
+              ${isLatest ? '🔄 ' : ''}Ref ${e.code} (${e.score}/10) → <span style="color:${scoreColor}">${e.topKeyword}</span>
+            </div>
+            <div style="font-size:.7rem;color:var(--muted);margin-top:2px">
+              Patrón: ${e.total} refs activas · ${e.exitos} éxito${e.exitos!==1?'s':''} · ${e.danos} daño${e.danos!==1?'s':''}
+            </div>
+          </div>
+          ${isLatest ? '<span style="font-size:.65rem;background:var(--primary);color:#fff;padding:2px 7px;border-radius:8px;white-space:nowrap;align-self:center">NUEVO</span>' : ''}
+        </div>`;
+      }).join('');
+      // Auto-scroll to top
+      timelineEl.scrollTop = 0;
+    }
+  }
 }
 
 async function handleRefFiles(event) {
@@ -3100,7 +3128,7 @@ async function processSplashFile(file) {
   document.getElementById('analysis-result').style.display = 'none';
 
   const id = 'cv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
-  const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', edad: null, fit: 0, area: '', fortalezas: [], banderas: [], resumen: '' };
+  const cvEntry = { id, fileName: file.name, status: 'analyzing', name: '', edad: null, fit: 0, fitBase: null, area: '', fortalezas: [], banderas: [], resumen: '' };
   cvDatabase.push(cvEntry);
 
   await analyzeCV(file, cvEntry);
