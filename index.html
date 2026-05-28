@@ -2469,8 +2469,10 @@ function renderRefCard(ref, isNew = false) {
 function updateRefScore(id, value) {
   const ref = refDatabase.find(r => r.id === id);
   if (!ref) return;
+  const wasApproved = ref.approved;
   ref.score = parseInt(value);
   ref.approved = false; // reset approval when score changes
+  if (wasApproved) { ref.stale = true; renderPatronGeneral(); }
   const cls = refClass(ref.score);
   const scoreColor = ref.score >= 6 ? 'var(--success)' : ref.score <= 4 ? 'var(--danger)' : 'var(--neutral)';
   const display = document.getElementById(`score-display-${id}`);
@@ -2487,7 +2489,39 @@ function updateRefArea(id, value) {
 
 function updateRefContext(id, value) {
   const ref = refDatabase.find(r => r.id === id);
-  if (ref) { ref.context = value; scheduleSave(); }
+  if (!ref) return;
+  ref.context = value;
+
+  // If already approved, mark as stale — needs re-approval to update keywords
+  if (ref.approved) {
+    ref.stale = true;
+    // Show stale warning + re-approve button on card
+    const card = document.getElementById(id);
+    if (card) {
+      let staleBar = card.querySelector('.ref-stale-bar');
+      if (!staleBar) {
+        staleBar = document.createElement('div');
+        staleBar.className = 'ref-stale-bar';
+        staleBar.style.cssText = 'margin-top:10px;padding:8px 12px;background:#fff8e1;border:1px solid #f0c040;border-radius:7px;font-size:.75rem;color:#b5860a;display:flex;align-items:center;justify-content:space-between;gap:8px';
+        staleBar.innerHTML = `<span>⚠ Texto modificado — re-aprueba para actualizar el patrón</span>
+          <button onclick="reApproveRef('${id}')" style="background:#b5860a;color:#fff;border:none;border-radius:5px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer">↻ Re-aprobar</button>`;
+        card.appendChild(staleBar);
+      }
+    }
+  }
+  scheduleSave();
+}
+
+async function reApproveRef(id) {
+  const ref = refDatabase.find(r => r.id === id);
+  if (!ref) return;
+  ref.approved = false;
+  ref.stale = false;
+  // Remove stale bar
+  const card = document.getElementById(id);
+  if (card) { const bar = card.querySelector('.ref-stale-bar'); if (bar) bar.remove(); }
+  // Re-run full approveRef flow (re-extracts keywords, rebuilds pattern)
+  await approveRef(id);
 }
 
 async function approveRef(id) {
