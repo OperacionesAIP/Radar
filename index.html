@@ -323,8 +323,7 @@ body:not(.edit-mode) .status-select{pointer-events:none}
 .ref-context{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:.8rem;font-family:inherit;resize:vertical;min-height:70px;outline:none;transition:border .15s;margin-top:8px}
 .ref-context:focus{border-color:var(--accent)}
 
-.ref-area-select{width:100%;border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;font-size:.8rem;font-family:inherit;outline:none;margin-top:8px;transition:border .15s}
-.ref-area-select:focus{border-color:var(--accent)}
+
 
 .ref-save-btn{width:100%;padding:9px;border:none;border-radius:6px;background:var(--primary);color:#fff;font-size:.82rem;font-weight:700;cursor:pointer;margin-top:10px;transition:background .15s}
 .ref-save-btn:hover{background:var(--primary-light)}
@@ -2692,9 +2691,6 @@ function renderRefCard(ref, isNew = false) {
   card.className = `ref-card ${cls}`;
   card.id = ref.id;
 
-  const areaOptions = ['Taller','Impresión / Plotter','Diseño 3D','Publicidad Móvil','Administración','Recepción','RH','Marketing','Sistemas','Supervisión','Otro'].map(a =>
-    `<option value="${a}" ${ref.area===a?'selected':''}>${a}</option>`).join('');
-
   const badgeHtml = ref.approved
     ? `<span class="ref-approved-badge">✓ En patrón</span>`
     : `<span class="ref-pending-badge">⏳ Pendiente</span>`;
@@ -2723,11 +2719,6 @@ function renderRefCard(ref, isNew = false) {
       </div>
     </div>
 
-    <select class="ref-area-select" onchange="updateRefArea('${ref.id}', this.value)">
-      <option value="">Selecciona el área donde trabajó</option>
-      ${areaOptions}
-    </select>
-
     <textarea class="ref-context" placeholder="¿Por qué fue exitoso o por qué hizo daño? Cuánto duró, qué hizo bien o mal, por qué salió..." onchange="updateRefContext('${ref.id}', this.value)">${ref.context}</textarea>
 
     ${approveBtn}`;
@@ -2749,11 +2740,6 @@ function updateRefScore(id, value) {
   const card = document.getElementById(id);
   if (card) { card.className = `ref-card ${cls}`; }
   scheduleSave();
-}
-
-function updateRefArea(id, value) {
-  const ref = refDatabase.find(r => r.id === id);
-  if (ref) { ref.area = value; scheduleSave(); }
 }
 
 function updateRefContext(id, value) {
