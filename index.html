@@ -482,6 +482,11 @@ body.analysis-active .save-status { display:none !important; }
 .hist-item.current .hist-restore-btn{display:none}
 .hist-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:.82rem}
 .hist-footer{padding:12px 16px;border-top:1px solid var(--border);font-size:.72rem;color:var(--muted);flex-shrink:0}
+
+/* ── PATRON GENERAL FILTER BUTTONS ── */
+.pf-btn{background:var(--card);border:1.5px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:20px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
+.pf-btn:hover{border-color:var(--primary);color:var(--primary)}
+.pf-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
 </style>
 </head>
 <body class="splash-active">
@@ -734,142 +739,57 @@ body.analysis-active .save-status { display:none !important; }
 <!-- ===== TAB 2: PATRÓN ===== -->
 <div class="tab-content" id="tab-patron">
 
-  <div class="section-title">Factores de éxito identificados</div>
-  <div class="factor-grid" id="factor-grid">
-    <div class="factor-card">
-      <button class="del-btn" title="Eliminar">×</button>
-      <div class="factor-title editable" contenteditable="false">💪 Resistencia Física</div>
-      <ul class="factor-list" data-type="success">
-        <li><span class="li-text editable" contenteditable="false">Resistencia a jornadas largas sin queja</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Velocidad de ejecución en taller</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Trabajo pesado sin fricción</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="factor-card">
-      <button class="del-btn" title="Eliminar">×</button>
-      <div class="factor-title editable" contenteditable="false">🤝 Actitud de Servicio</div>
-      <ul class="factor-list" data-type="success">
-        <li><span class="li-text editable" contenteditable="false">Atención a instrucciones</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Disposición sin cuestionamientos</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Integración natural al equipo</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="factor-card">
-      <button class="del-btn" title="Eliminar">×</button>
-      <div class="factor-title editable" contenteditable="false">🎨 Habilidad Digital / 3D</div>
-      <ul class="factor-list" data-type="success">
-        <li><span class="li-text editable" contenteditable="false">CAD y modelado 3D</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Diseño digital básico o avanzado</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Manejo de software creativo</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="factor-card">
-      <button class="del-btn" title="Eliminar">×</button>
-      <div class="factor-title editable" contenteditable="false">🔄 Versatilidad</div>
-      <ul class="factor-list" data-type="success">
-        <li><span class="li-text editable" contenteditable="false">Adaptación a múltiples tareas</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">No se "encajona" en un solo rol</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Aprende rápido nuevas operaciones</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Agrega ejemplos de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="factor-card riesgo">
-      <button class="del-btn" title="Eliminar">×</button>
-      <div class="factor-title editable" contenteditable="false">🚨 Riesgo: Sobrecalificado especializado</div>
-      <ul class="factor-list" data-type="riesgo">
-        <li><span class="li-text editable" contenteditable="false">Ingenieros con historial ultra-especializado</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Expectativas de rol formal/estructurado</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Frustración con tareas polivalentes</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Agrega casos documentados de tu empresa</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="factor-card riesgo">
-      <button class="del-btn" title="Eliminar">×</button>
-      <div class="factor-title editable" contenteditable="false">🚨 Riesgo: Alta exigencia salarial</div>
-      <ul class="factor-list" data-type="riesgo">
-        <li><span class="li-text editable" contenteditable="false">Historial en empresas grandes (CEMEX, OXXO)</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Pretensiones fuera de rango mercado regional</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Foráneos sin arraigo local</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Rotación temprana por mejor oportunidad</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <button class="add-card-btn" onclick="addFactorCard()">+ Agregar factor</button>
-  </div>
-
-  <div class="section-title">Reglas de selección</div>
-  <div class="dondont-grid">
-    <div class="do-card">
-      <h4>✅ SÍ contratar cuando...</h4>
-      <ul id="do-list">
-        <li><span class="li-text editable" contenteditable="false">Demuestra actitud positiva ante trabajo físico</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Ha trabajado en entornos mixtos/polivalentes</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Tiene habilidades digitales/3D para esas áreas</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Muestra deseo de aprender y mejorar</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Tiene arraigo local (Torreón/Durango/Gómez)</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Historial sin conflictos con superiores</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
-    </div>
-    <div class="dont-card">
-      <h4>🚫 EVITAR cuando...</h4>
-      <ul id="dont-list">
-        <li><span class="li-text editable" contenteditable="false">Viene de empresas estructuradas con rol muy específico</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Su CV grita "quiero un puesto de ingeniería formal"</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Historial de rotación frecuente por "mejora salarial"</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">No tiene experiencia en trabajo físico o de taller</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Acostumbrado a horarios de oficina estrictos</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li><span class="li-text editable" contenteditable="false">Exige condiciones incompatibles con entorno industrial</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addListItem(this)">+ Agregar punto</button>
+  <!-- Estado vacío -->
+  <div id="patron-general-empty" style="text-align:center;padding:60px 20px;color:var(--muted)">
+    <div style="font-size:3rem;margin-bottom:12px">🧬</div>
+    <div style="font-weight:700;font-size:1rem;margin-bottom:8px">El patrón se construye solo</div>
+    <div style="font-size:.84rem;line-height:1.6;max-width:340px;margin:0 auto">
+      Aprueba referencias en la pestaña <strong>🧬 Referencias</strong> y los factores de éxito y riesgo aparecerán aquí automáticamente.
     </div>
   </div>
 
-  <div class="section-title">Perfil ideal por área</div>
-  <div class="perfil-area-grid" id="perfil-grid">
-    <div class="perfil-card">
-      <button class="del-btn" title="Eliminar">×</button>
-      <h4 class="editable" contenteditable="false">🔧 Taller</h4>
-      <ul class="perfil-items">
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Resistencia física comprobable</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Actitud servicial y proactiva</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Sin expectativas de puesto especializado</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Velocidad de ejecución</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Tolerancia a jornadas largas</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addPerfilItem(this)">+ Agregar punto</button>
+  <!-- Contenido dinámico -->
+  <div id="patron-general-content" style="display:none">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+      <div>
+        <div class="section-title" style="margin:0">Patrón construido desde referencias</div>
+        <div style="font-size:.76rem;color:var(--muted);margin-top:3px">Generado automáticamente · <span id="patron-general-refs">0</span> referencias aprobadas</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="patron-general-filters">
+        <button onclick="setPatronFilter('all')"   id="pf-all"   class="pf-btn active">Todos</button>
+        <button onclick="setPatronFilter('exito')" id="pf-exito" class="pf-btn">✓ Éxito</button>
+        <button onclick="setPatronFilter('dano')"  id="pf-dano"  class="pf-btn">⚠ Daño</button>
+      </div>
     </div>
-    <div class="perfil-card">
-      <button class="del-btn" title="Eliminar">×</button>
-      <h4 class="editable" contenteditable="false">🖥️ Diseño 3D</h4>
-      <ul class="perfil-items">
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Dominio de CAD (SolidWorks, AutoCAD, etc.)</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Portafolio de trabajos 3D</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Disposición a aprender herramientas nuevas</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Mejora continua como valor personal</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addPerfilItem(this)">+ Agregar punto</button>
+
+    <!-- Factores de éxito -->
+    <div id="pg-exito-section">
+      <div style="font-size:.72rem;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">✓ Señales de éxito</div>
+      <div class="factor-grid" id="pg-exito-grid"></div>
     </div>
-    <div class="perfil-card">
-      <button class="del-btn" title="Eliminar">×</button>
-      <h4 class="editable" contenteditable="false">🖨️ Impresión / Plotter</h4>
-      <ul class="perfil-items">
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Experiencia en impresión gran formato (ideal)</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Habilidades básicas diseño digital</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Alta resiliencia a jornadas largas</span><button class="del-btn" title="Eliminar">×</button></li>
-        <li class="perfil-item"><div class="dot"></div><span class="li-text editable" contenteditable="false">Perfil híbrido: técnico + creativo</span><button class="del-btn" title="Eliminar">×</button></li>
-      </ul>
-      <button class="add-item-btn" onclick="addPerfilItem(this)">+ Agregar punto</button>
+
+    <!-- Factores de daño -->
+    <div id="pg-dano-section" style="margin-top:20px">
+      <div style="font-size:.72rem;font-weight:700;color:var(--danger);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">⚠ Señales de riesgo</div>
+      <div class="factor-grid" id="pg-dano-grid"></div>
     </div>
-    <button class="add-card-btn" onclick="addPerfilCard()">+ Agregar área</button>
+
+    <!-- Reglas SÍ / NO generadas -->
+    <div id="pg-rules-section" style="margin-top:20px">
+      <div class="section-title" style="margin-bottom:12px">Reglas derivadas del patrón</div>
+      <div class="dondont-grid">
+        <div class="do-card">
+          <h4>✅ Señales positivas recurrentes</h4>
+          <ul id="pg-do-list"></ul>
+        </div>
+        <div class="dont-card">
+          <h4>🚫 Señales de riesgo recurrentes</h4>
+          <ul id="pg-dont-list"></ul>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1511,6 +1431,7 @@ function showTab(id) {
   window.scrollTo({top:0,behavior:'smooth'});
   if (id === 'tab-resumen') { animateCounters(); updateDashboardKPIs(); }
   if (id === 'tab-referencias') renderPatronPreview();
+  if (id === 'tab-patron') renderPatronGeneral();
 }
 
 function updateBar(el) {
@@ -1788,6 +1709,111 @@ function filterCVBank(query) {
   const empty = document.getElementById('cv-empty');
   if (empty) empty.style.display = (visible === 0 && q) ? 'block' : (cvDatabase.filter(c=>c.status==='done').length===0?'block':'none');
 }
+
+
+// ══ PATRON GENERAL — construcción dinámica desde referencias ══
+let patronGeneralFilter = 'all';
+
+function setPatronFilter(f) {
+  patronGeneralFilter = f;
+  document.querySelectorAll('.pf-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('pf-' + f);
+  if (btn) btn.classList.add('active');
+  const exitoSec = document.getElementById('pg-exito-section');
+  const danoSec  = document.getElementById('pg-dano-section');
+  if (exitoSec) exitoSec.style.display = (f === 'dano')  ? 'none' : '';
+  if (danoSec)  danoSec.style.display  = (f === 'exito') ? 'none' : '';
+}
+
+function renderPatronGeneral() {
+  const approved = refDatabase.filter(r => r.approved && r.keywords && r.keywords.length);
+  const empty   = document.getElementById('patron-general-empty');
+  const content = document.getElementById('patron-general-content');
+  if (!empty || !content) return;
+
+  if (!approved.length) {
+    empty.style.display   = '';
+    content.style.display = 'none';
+    return;
+  }
+  empty.style.display   = 'none';
+  content.style.display = '';
+
+  const refsEl = document.getElementById('patron-general-refs');
+  if (refsEl) refsEl.textContent = approved.length;
+
+  const exitos = approved.filter(r => r.score >= 6);
+  const danos  = approved.filter(r => r.score <= 4);
+
+  // Count keyword frequency + track which refs mention it
+  const countKw = (refs) => {
+    const map = {};
+    refs.forEach(r => {
+      (r.keywords || []).forEach(kw => {
+        if (!map[kw]) map[kw] = { count: 0, refs: [], areas: new Set() };
+        map[kw].count++;
+        map[kw].refs.push(r.code || r.id);
+        if (r.area) map[kw].areas.add(r.area);
+      });
+    });
+    return Object.entries(map).sort((a,b) => b[1].count - a[1].count);
+  };
+
+  const exitoKws = countKw(exitos);
+  const danoKws  = countKw(danos);
+
+  // Render a factor-grid from keyword entries
+  const renderGrid = (gridId, kwEntries, type) => {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    if (!kwEntries.length) { grid.innerHTML = '<div style="font-size:.8rem;color:var(--muted);font-style:italic;padding:8px">Sin datos suficientes aún</div>'; return; }
+
+    const color     = type === 'exito' ? 'var(--success)' : 'var(--danger)';
+    const bgColor   = type === 'exito' ? '#e8f5e9' : '#fdecea';
+    const borderCol = type === 'exito' ? 'var(--success)' : 'var(--danger)';
+
+    grid.innerHTML = kwEntries.map(([kw, data]) => {
+      const areas = [...data.areas].join(', ');
+      const strength = data.count >= 3 ? '🔥' : data.count === 2 ? '↑' : '';
+      const widthPct = Math.min(100, Math.round((data.count / approved.length) * 100));
+      return `<div class="factor-card ${type === 'dano' ? 'riesgo' : ''}" style="border-top:3px solid ${borderCol}">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:8px">
+          <div style="font-weight:800;font-size:.88rem;color:var(--text);line-height:1.3">${strength} ${kw}</div>
+          <span style="background:${bgColor};color:${color};font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0">${data.count} ref${data.count!==1?'s':''}</span>
+        </div>
+        <div style="background:#f0f0f0;border-radius:4px;height:5px;margin-bottom:8px;overflow:hidden">
+          <div style="height:100%;width:${widthPct}%;background:${color};border-radius:4px;transition:width .6s ease"></div>
+        </div>
+        ${areas ? `<div style="font-size:.68rem;color:var(--muted)">Áreas: ${areas}</div>` : ''}
+        <div style="font-size:.68rem;color:var(--muted);margin-top:3px">Refs: ${data.refs.join(', ')}</div>
+      </div>`;
+    }).join('');
+  };
+
+  renderGrid('pg-exito-grid', exitoKws, 'exito');
+  renderGrid('pg-dano-grid',  danoKws,  'dano');
+
+  // Render reglas SÍ/NO: top 5 keywords de cada tipo
+  const doList   = document.getElementById('pg-do-list');
+  const dontList = document.getElementById('pg-dont-list');
+  const rulesSec = document.getElementById('pg-rules-section');
+  if (rulesSec) rulesSec.style.display = (exitoKws.length || danoKws.length) ? '' : 'none';
+
+  if (doList) {
+    doList.innerHTML = exitoKws.slice(0, 6).map(([kw, data]) =>
+      `<li><span class="li-text">${kw} <span style="font-size:.68rem;color:var(--muted)">(${data.count} ref${data.count!==1?'s':''})</span></span></li>`
+    ).join('') || '<li><span class="li-text" style="color:var(--muted)">Sin datos aún</span></li>';
+  }
+  if (dontList) {
+    dontList.innerHTML = danoKws.slice(0, 6).map(([kw, data]) =>
+      `<li><span class="li-text">${kw} <span style="font-size:.68rem;color:var(--muted)">(${data.count} ref${data.count!==1?'s':''})</span></span></li>`
+    ).join('') || '<li><span class="li-text" style="color:var(--muted)">Sin datos aún</span></li>';
+  }
+
+  // Re-apply filter
+  setPatronFilter(patronGeneralFilter);
+}
+// ══ END PATRON GENERAL ══
 
 function renderCharts(rec, cons, arch, done) {
   // ── Chart 1: Fit distribution (doughnut) ──
@@ -2510,6 +2536,7 @@ Ejemplo de respuesta: ["polivalente","arraigo local","trabajo físico","sin pret
   renderRefCard(ref);
   updateRefStats();
   renderPatronPreview();
+  renderPatronGeneral();
   saveRefDatabase();
 }
 
@@ -2522,6 +2549,7 @@ function deleteRef(id) {
   if (el) el.remove();
   updateRefStats();
   renderPatronPreview();
+  renderPatronGeneral();
   if (refMode === 'auto') updatePatronFromRefs();
   if (refDatabase.length === 0) document.getElementById('ref-empty').style.display = '';
   saveRefDatabase();
