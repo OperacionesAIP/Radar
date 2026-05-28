@@ -1746,21 +1746,28 @@ function renderPatronGeneral() {
   const danos  = approved.filter(r => r.score <= 4);
 
   // Count keyword frequency + track which refs mention it
-  const countKw = (refs) => {
+  const countKw = (entries) => {
     const map = {};
-    refs.forEach(r => {
-      (r.keywords || []).forEach(kw => {
-        if (!map[kw]) map[kw] = { count: 0, refs: [], areas: new Set() };
-        map[kw].count++;
-        map[kw].refs.push(r.code || r.id);
-        if (r.area) map[kw].areas.add(r.area);
-      });
+    entries.forEach(({ kw, ref }) => {
+      if (!kw || !kw.trim()) return;
+      if (!map[kw]) map[kw] = { count: 0, refs: [], areas: new Set() };
+      map[kw].count++;
+      map[kw].refs.push(ref.code || ref.id);
+      if (ref.area) map[kw].areas.add(ref.area);
     });
     return Object.entries(map).sort((a,b) => b[1].count - a[1].count);
   };
 
-  const exitoKws = countKw(exitos);
-  const danoKws  = countKw(danos);
+  // Positivas: keywords de refs de éxito
+  const exitoEntries = exitos.flatMap(r => (r.keywords || []).map(kw => ({ kw, ref: r })));
+  // Negativas: keywordsNeg de TODAS las refs + keywords de refs de daño
+  const danoEntries = [
+    ...approved.flatMap(r => (r.keywordsNeg || []).map(kw => ({ kw, ref: r }))),
+    ...danos.flatMap(r => (r.keywords || []).map(kw => ({ kw, ref: r }))),
+  ];
+
+  const exitoKws = countKw(exitoEntries);
+  const danoKws  = countKw(danoEntries);
 
   // Render a factor-grid from keyword entries
   const renderGrid = (gridId, kwEntries, type) => {
@@ -2306,32 +2313,33 @@ function renderPatronPreview() {
   const exitos = approved.filter(r => r.score >= 6);
   const danos  = approved.filter(r => r.score <= 4);
 
+  // Señales positivas: keywords de refs de éxito (score>=6)
+  // Señales de daño:   keywordsNeg de TODAS las refs + keywords de refs de daño (score<=4)
   const exitoTags = exitos.flatMap(r => r.keywords || []);
-  const danoTags  = danos.flatMap(r => r.keywords  || []);
+  const danoTags  = [
+    ...danos.flatMap(r => r.keywords || []),
+    ...approved.flatMap(r => r.keywordsNeg || [])
+  ];
 
   const countTags = (arr) => {
     const m = {};
-    arr.forEach(t => m[t] = (m[t]||0)+1);
+    arr.forEach(t => { if(t && t.trim()) m[t] = (m[t]||0)+1; });
     return Object.entries(m).sort((a,b) => b[1]-a[1]).slice(0,10);
   };
 
   const exitoTop = countTags(exitoTags);
   const danoTop  = countTags(danoTags);
 
-  // Tags de éxito con tamaño por frecuencia
-  document.getElementById('patron-exito-tags').innerHTML =
-    exitoTop.map(([t,c]) => {
-      const size = c >= 3 ? '1rem' : c === 2 ? '.84rem' : '.75rem';
-      const op = c >= 3 ? '1' : c === 2 ? '.85' : '.7';
-      return `<span class="patron-tag pos" style="font-size:${size};opacity:${op};animation:fadeUp .4s ease both">${t}${c>1?` <sup style='font-size:.6rem'>×${c}</sup>`:''}</span>`;
-    }).join('');
+  const renderTags = (tags, cls) => tags.length
+    ? tags.map(([t,c]) => {
+        const size = c >= 3 ? '1rem' : c === 2 ? '.84rem' : '.75rem';
+        const op   = c >= 3 ? '1'    : c === 2 ? '.85'    : '.7';
+        return `<span class="patron-tag ${cls}" style="font-size:${size};opacity:${op};animation:fadeUp .4s ease both">${t}${c>1?` <sup style='font-size:.6rem'>×${c}</sup>`:''}</span>`;
+      }).join('')
+    : `<span style="font-size:.72rem;color:var(--muted);font-style:italic">Sin señales aún</span>`;
 
-  document.getElementById('patron-dano-tags').innerHTML =
-    danoTop.map(([t,c]) => {
-      const size = c >= 3 ? '1rem' : c === 2 ? '.84rem' : '.75rem';
-      const op = c >= 3 ? '1' : c === 2 ? '.85' : '.7';
-      return `<span class="patron-tag neg" style="font-size:${size};opacity:${op};animation:fadeUp .4s ease both">${t}${c>1?` <sup style='font-size:.6rem'>×${c}</sup>`:''}</span>`;
-    }).join('');
+  document.getElementById('patron-exito-tags').innerHTML = renderTags(exitoTop, 'pos');
+  document.getElementById('patron-dano-tags').innerHTML  = renderTags(danoTop,  'neg');
 
   // Barra de fuerza: escala 0-100 según # referencias y diversidad
   const totalKeywords = exitoTop.length + danoTop.length;
@@ -2402,7 +2410,7 @@ async function handleRefFiles(event) {
 
   for (const file of files) {
     const id = 'ref-' + Date.now() + '-' + Math.random().toString(36).slice(2,5);
-    const entry = { id, fileName: file.name, score: 7, context: '', area: '', approved: false, keywords: [], code: '', status: 'pending-info' };
+    const entry = { id, fileName: file.name, score: 7, context: '', area: '', approved: false, keywords: [], keywordsNeg: [], code: '', status: 'pending-info' };
     refDatabase.push(entry);
     renderRefCard(entry, true);
     updateRefStats();
@@ -2535,29 +2543,38 @@ async function approveRef(id) {
     else { ref.code = `N-${String(exitoCounter + danoCounter + 1).padStart(3,'0')}`; }
   }
 
-  // Extract keywords from context using Claude
+  // Extract keywords from context using Claude — classified as positive or negative
   if (ref.context && ref.context.length > 10) {
     try {
-      const prompt = `Extrae máximo 6 palabras clave o frases cortas (2-3 palabras) del siguiente texto que describan características laborales de esta persona. Responde SOLO con un array JSON de strings, sin explicación ni código markdown.
+      const prompt = `Analiza el siguiente texto sobre una persona y clasifica sus características laborales en dos grupos: positivas (fortalezas, virtudes, actitudes favorables) y negativas (debilidades, riesgos, limitaciones).
 
 Texto: "${ref.context}"
 
-Ejemplo de respuesta: ["polivalente","arraigo local","trabajo físico","sin pretensiones","estabilidad laboral"]`;
+Responde SOLO con un objeto JSON válido, sin explicación ni código markdown:
+{
+  "positivas": ["máximo 5 frases cortas de características FAVORABLES"],
+  "negativas": ["máximo 4 frases cortas de características DESFAVORABLES o de riesgo"]
+}
+
+Importante: si una frase contiene negación (ej: "no maneja procesos", "no es ordenado", "trabajo solitario") es NEGATIVA. Si es una cualidad (ej: "adaptabilidad", "acepta retos") es POSITIVA. Si no hay características negativas, devuelve un array vacío en negativas.`;
 
       const response = await fetch('https://radar-api.operaciones-e37.workers.dev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
-          max_tokens: 200,
+          max_tokens: 300,
           messages: [{ role: 'user', content: prompt }]
         })
       });
       const data = await response.json();
-      const text = data.content?.[0]?.text || '[]';
-      ref.keywords = JSON.parse(text.replace(/```json|```/g,'').trim());
+      const text = data.content?.[0]?.text || '{}';
+      const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+      ref.keywords    = parsed.positivas || [];
+      ref.keywordsNeg = parsed.negativas || [];
     } catch(e) {
-      ref.keywords = [];
+      ref.keywords    = [];
+      ref.keywordsNeg = [];
     }
   }
 
