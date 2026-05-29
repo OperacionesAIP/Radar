@@ -649,9 +649,6 @@ body.analysis-active .save-status { display:none !important; }
   <button class="tab-btn" onclick="showTab('tab-patron')">🔍 Patrón General</button>
   <button class="tab-btn" onclick="showTab('tab-contratados')">👥 Contratados</button>
   <button class="tab-btn" onclick="showTab('tab-miguel')">📖 Casos de Estudio</button>
-  <button class="tab-btn" onclick="showTab('tab-recomendados')">⭐ Recomendados</button>
-  <button class="tab-btn" onclick="showTab('tab-consideracion')">🔍 En Consideración</button>
-  <button class="tab-btn" onclick="showTab('tab-archivo')">📁 Archivo</button>
   <button class="tab-btn" onclick="showTab('tab-cvs')">📂 Banco de CVs</button>
   <button class="tab-btn" onclick="showTab('tab-referencias')">🧬 Referencias</button>
   <button class="tab-btn" onclick="showTab('tab-inteligencia')">🧠 Inteligencia del Patrón</button>
@@ -834,32 +831,7 @@ body.analysis-active .save-status { display:none !important; }
 </div>
 
 <!-- ===== TAB 5: RECOMENDADOS ===== -->
-<div class="tab-content" id="tab-recomendados">
 
-  <div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="hist-btn" onclick="openHistPanel()" title="Ver historial de cambios">🕑 Historial <span class="hist-badge">0</span></button></div>
-  <div class="rec-section">
-    <h3>🔧 Taller — Candidatos recomendados</h3>
-    <div class="rec-grid" id="rec-taller">
-      </div>
-  </div>
-
-  <div class="rec-section">
-    <h3>🖥️ Diseño 3D — Candidatos recomendados</h3>
-    <div class="rec-grid" id="rec-diseno">
-      </div>
-  </div>
-
-  <div class="rec-section">
-    <h3>🖨️ Impresión / Plotter — Candidatos recomendados</h3>
-    <div class="rec-grid" id="rec-impresion">
-      </div>
-  </div>
-
-  <div style="background:#e8f0fe;border-left:4px solid var(--primary);border-radius:8px;padding:14px 18px;margin-top:8px">
-    <div style="font-weight:700;color:var(--primary);margin-bottom:6px">📌 Nota sobre los recomendados</div>
-    <div class="editable-block" contenteditable="false" style="font-size:.83rem;color:#444;line-height:1.6">Los porcentajes de fit son estimaciones basadas en el análisis de CV comparado con el patrón de éxito de los contratados activos. No reemplazan la entrevista. La pregunta clave: explorar expectativas de tipo de trabajo y tolerancia a polivalencia. Para taller: validar resistencia física. Para diseño 3D: solicitar portafolio.</div>
-  </div>
-</div>
 
 <!-- ===== TAB: REFERENCIAS ===== -->
 <div class="tab-content" id="tab-referencias">
@@ -961,6 +933,15 @@ body.analysis-active .save-status { display:none !important; }
     </button>
   </div>
 
+  <!-- Filtros de fit -->
+  <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap" id="fit-filters">
+    <button class="pf-btn active" onclick="setCVFilter('all')"   id="cvf-all">Todos</button>
+    <button class="pf-btn"        onclick="setCVFilter('alto')"  id="cvf-alto">⭐ Alto fit ≥70%</button>
+    <button class="pf-btn"        onclick="setCVFilter('medio')" id="cvf-medio">🔍 Medio 40–69%</button>
+    <button class="pf-btn"        onclick="setCVFilter('bajo')"  id="cvf-bajo">📁 Bajo &lt;40%</button>
+    <button class="pf-btn"        onclick="setCVFilter('pendiente')" id="cvf-pendiente">⏳ Por analizar</button>
+  </div>
+
   <!-- Buscador de candidatos -->
   <div style="position:relative;margin-bottom:14px">
     <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.95rem;pointer-events:none">🔍</span>
@@ -990,19 +971,10 @@ body.analysis-active .save-status { display:none !important; }
 </div>
 
 <!-- ===== TAB: EN CONSIDERACIÓN ===== -->
-<div class="tab-content" id="tab-consideracion">
-  <div class="section-title">🔍 En Consideración <span style="font-size:.78rem;font-weight:400;color:var(--muted)">— Fit 40–69% · Tienen potencial pero requieren validación en entrevista</span></div>
-  <div class="rec-grid" id="rec-consideracion">
-      </div>
-</div>
+
 
 <!-- ===== TAB: ARCHIVO ===== -->
-<div class="tab-content" id="tab-archivo">
-  <div class="section-title">📁 Archivo <span style="font-size:.78rem;font-weight:400;color:var(--muted)">— Fit menor a 40% · No empatan con el perfil actual de la empresa</span></div>
-  <p style="font-size:.82rem;color:var(--muted);margin-bottom:18px;line-height:1.6">Estos candidatos no son descartados por ser malos profesionales — simplemente no empatan con las necesidades y cultura actuales de la empresa. Se archivan con la explicación para aprender del patrón.</p>
-  <div class="rec-grid" id="rec-archivo">
-      </div>
-</div>
+
 
 <!-- ===== TAB: INTELIGENCIA DEL PATRÓN ===== -->
 <div class="tab-content" id="tab-inteligencia">
@@ -1114,7 +1086,7 @@ function captureSnapshot() {
     refDatabase:  JSON.stringify(refDatabase),
     tabsHTML:     (() => {
       const o = {};
-      ['tab-contratados','tab-recomendados','tab-consideracion','tab-archivo','tab-patron'].forEach(id => {
+      ['tab-contratados','tab-patron'].forEach(id => {
         const el = document.getElementById(id);
         if (el) o[id] = el.innerHTML;
       });
@@ -1214,9 +1186,6 @@ function formatHistTimeShort(ts) {
 
 const TAB_NAMES = {
   'tab-cvs':          '📂 Banco de CVs',
-  'tab-recomendados': '⭐ Recomendados',
-  'tab-consideracion':'🔍 En Consideración',
-  'tab-archivo':      '📁 Archivo',
   'tab-contratados':  '👥 Contratados',
   'tab-referencias':  '🧬 Referencias',
   'tab-inteligencia': '🧠 Inteligencia del Patrón',
@@ -1532,7 +1501,7 @@ function showTab(id) {
   document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const idx = ['tab-resumen','tab-patron','tab-contratados','tab-miguel','tab-recomendados','tab-consideracion','tab-archivo','tab-cvs','tab-referencias'].indexOf(id);
+  const idx = ['tab-resumen','tab-patron','tab-contratados','tab-miguel','tab-cvs','tab-referencias','tab-inteligencia'].indexOf(id);
   document.querySelectorAll('.tab-btn')[idx].classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
   if (id === 'tab-resumen') { animateCounters(); updateDashboardKPIs(); }
@@ -1796,6 +1765,19 @@ function renderEdadMetrics(done) {
 }
 
 
+
+let cvFitFilter = 'all';
+
+function setCVFilter(f) {
+  cvFitFilter = f;
+  document.querySelectorAll('#fit-filters .pf-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('cvf-' + f);
+  if (btn) btn.classList.add('active');
+  // Re-apply search + fit filter
+  const searchVal = document.getElementById('cv-search')?.value || '';
+  filterCVBank(searchVal);
+}
+
 function filterCVBank(query) {
   const q = query.trim().toLowerCase();
   const cards = document.querySelectorAll('#cv-grid .cv-card');
@@ -1803,8 +1785,16 @@ function filterCVBank(query) {
   cards.forEach(card => {
     const cv = cvDatabase.find(c => c.id === card.id);
     if (!cv) { card.style.display = ''; visible++; return; }
+    // Fit filter
+    let fitMatch = true;
+    if (cvFitFilter === 'alto')     fitMatch = cv.fit >= 70 && cv.status === 'done';
+    else if (cvFitFilter === 'medio')    fitMatch = cv.fit >= 40 && cv.fit < 70 && cv.status === 'done';
+    else if (cvFitFilter === 'bajo')     fitMatch = cv.fit < 40 && cv.status === 'done';
+    else if (cvFitFilter === 'pendiente') fitMatch = cv.status === 'analyzing';
+    // Search filter
     const searchText = [cv.name, cv.area, ...(cv.fortalezas||[]), ...(cv.banderas||[]), cv.resumen||''].join(' ').toLowerCase();
-    const match = !q || searchText.includes(q);
+    const searchMatch = !q || searchText.includes(q);
+    const match = fitMatch && searchMatch;
     card.style.display = match ? '' : 'none';
     if (match) visible++;
   });
@@ -2269,7 +2259,7 @@ function renderCVCard(cv) {
       ${fortalezasHtml ? `<div class="cv-section"><div class="cv-section-title">Fortalezas</div><div class="cv-tags">${fortalezasHtml}</div></div>` : ''}
       ${banderasHtml ? `<div class="cv-section"><div class="cv-section-title">Banderas rojas</div><div class="cv-tags">${banderasHtml}</div></div>` : ''}
       <div class="cv-card-actions">
-        <button class="cv-action-btn cv-add-btn" onclick="addCVToRecomendados('${cv.id}')" id="add-btn-${cv.id}">⭐ Agregar a Recomendados</button>
+
         <button class="cv-action-btn cv-case-btn" onclick="openCasoModal('${cv.id}')" title="Documentar como caso de estudio">📖</button>
         <button class="cv-action-btn cv-del-btn" onclick="deleteCVCard('${cv.id}')">🗑</button>
       </div>`;
@@ -2381,75 +2371,6 @@ function deleteCVCard(id) {
   saveCVDatabase();
 }
 
-function addCVToRecomendados(id) {
-  const cv = cvDatabase.find(c => c.id === id);
-  if (!cv) return;
-
-  // Route by fit score
-  let targetTab, gridId, borderColor;
-  if (cv.fit >= 70) {
-    targetTab = 'tab-recomendados';
-    const sectionMap = { 'Taller':'rec-taller','Diseño 3D':'rec-diseno','Impresión-Plotter':'rec-impresion' };
-    gridId = sectionMap[cv.area] || 'rec-taller';
-    borderColor = '';
-  } else if (cv.fit >= 40) {
-    targetTab = 'tab-consideracion';
-    gridId = 'rec-consideracion';
-    borderColor = 'border-left:4px solid var(--warning)';
-  } else {
-    targetTab = 'tab-archivo';
-    gridId = 'rec-archivo';
-    borderColor = 'border-left:4px solid #ccc;opacity:.9';
-  }
-
-  const grid = document.getElementById(gridId);
-  if (!grid) return;
-
-  const barId = 'bar-cv-' + Date.now();
-  const fitBarStyle = cv.fit >= 70
-    ? 'background:linear-gradient(90deg,var(--success),#52b788)'
-    : cv.fit >= 40
-    ? 'background:linear-gradient(90deg,#b5860a,#e9c46a)'
-    : 'background:#ccc';
-
-  const noMatchNote = cv.fit < 40 ? `
-    <div style="margin-top:8px;padding:10px;background:#f8f9fa;border-radius:6px;font-size:.79rem;color:#555;line-height:1.6">
-      <strong style="color:var(--muted)">📋 Por qué no empata:</strong><br>${cv.banderas.map(b => '• ' + b).join('<br>')}
-    </div>` : '';
-
-  const validationNote = cv.fit >= 40 && cv.fit < 70 && cv.banderas.length ? `
-    <div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;font-size:.78rem;color:#555;line-height:1.5">
-      <strong style="color:#b5860a">⚠ Validar en entrevista:</strong> ${cv.banderas.join(' · ')}
-    </div>` : '';
-
-  const div = document.createElement('div');
-  div.className = 'rec-card' + (cv.fit >= 80 ? ' top' : '');
-  div.style.cssText = borderColor;
-  div.innerHTML = `
-    <button class="del-btn" style="position:absolute;top:8px;right:8px" title="Eliminar">×</button>
-    <div class="rec-name"><span class="editable" contenteditable="false">${cv.name}</span> <span class="badge badge-neutral">Fit ${cv.fit}%</span></div>
-    <div class="rec-meta editable" contenteditable="false">${cv.area} · ${cv.fit >= 70 ? 'Alta compatibilidad' : cv.fit >= 40 ? 'Requiere validación' : 'Sin match actual'}</div>
-    <div class="score-bar-wrap">
-      <div class="score-label"><span>Fit con patrón</span><span class="editable score-pct" contenteditable="false" data-bar="${barId}" oninput="updateBar(this)">${cv.fit}%</span></div>
-      <div class="score-bar"><div class="score-fill" id="${barId}" style="width:${cv.fit}%;${fitBarStyle}"></div></div>
-    </div>
-    <div class="tags editable-block" contenteditable="false">${cv.fortalezas.join(' · ')}</div>
-    ${validationNote}${noMatchNote}
-    <div class="rec-why editable-block" contenteditable="false">${cv.resumen}</div>`;
-
-  const addBtn = grid.querySelector('.add-card-btn');
-  if (addBtn) grid.insertBefore(div, addBtn);
-  else grid.appendChild(div);
-
-  const btn = document.getElementById('add-btn-' + id);
-  if (btn) { btn.textContent = '✓ Agregado'; btn.disabled = true; }
-
-  const tabLabels = {'tab-recomendados':'Recomendados','tab-consideracion':'En Consideración','tab-archivo':'Archivo'};
-  pushHistory(`📋 ${cv.name} → ${tabLabels[targetTab] || targetTab} (${cv.fit}%)`, targetTab, 'cv');
-  scheduleSave();
-  showTab(targetTab);
-  setTimeout(() => showTab('tab-cvs'), 1800);
-}
 
 function saveCVDatabase() {
   try {
@@ -3307,7 +3228,7 @@ function saveResultAndEnter(action) {
       renderCVCard(splashCVResult);
       updateCVStats();
       updateDashboardKPIs();
-      if (action === 'rec') addCVToRecomendados(splashCVResult.id);
+      if (action === 'rec') showTab('tab-cvs'); // ir al banco
       saveCVDatabase();
       splashCVResult = null;
     }
