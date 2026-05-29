@@ -654,17 +654,17 @@ body.analysis-active .save-status { display:none !important; }
 </div>
 
 <div class="tab-nav">
-  <button class="tab-btn active" onclick="showTab('tab-resumen')">📊 Resumen</button>
-  <button class="tab-btn" onclick="showTab('tab-cvs')">📂 Banco de CVs</button>
-  <button class="tab-btn" onclick="showTab('tab-contratados')">👥 Equipo Actual</button>
-  <button class="tab-btn" onclick="showTab('tab-miguel')">📖 Casos</button>
-  <button class="tab-btn" onclick="showTab('tab-patron')">🔍 Patrón General</button>
+  <button class="tab-btn active" onclick="showTab('tab-resumen')" data-tab="tab-resumen">📊 Resumen</button>
+  <button class="tab-btn" onclick="showTab('tab-cvs')" data-tab="tab-cvs">📂 Banco de CVs</button>
+  <button class="tab-btn" onclick="showTab('tab-contratados')" data-tab="tab-contratados">👥 Equipo Actual</button>
+  <button class="tab-btn" onclick="showTab('tab-miguel')" data-tab="tab-miguel">📖 Casos</button>
+  <button class="tab-btn" onclick="showTab('tab-patron')" data-tab="tab-patron">🔍 Patrón General</button>
   <!-- Sub-grupo ADN -->
   <div class="tab-group" id="tab-group-adn">
     <button class="tab-btn tab-group-btn" onclick="toggleTabGroup('tab-group-adn')">🧬 ADN ▾</button>
     <div class="tab-group-items" id="tab-group-adn-items">
-      <button class="tab-btn sub-tab" onclick="showTab('tab-referencias')">🧬 Referencias</button>
-      <button class="tab-btn sub-tab" onclick="showTab('tab-inteligencia')">🧠 Inteligencia</button>
+      <button class="tab-btn sub-tab" onclick="showTab('tab-referencias')" data-tab="tab-referencias">🧬 Referencias</button>
+      <button class="tab-btn sub-tab" onclick="showTab('tab-inteligencia')" data-tab="tab-inteligencia">🧠 Inteligencia</button>
     </div>
   </div>
 </div>
@@ -677,15 +677,15 @@ body.analysis-active .save-status { display:none !important; }
   <div class="kpi-grid" style="margin-bottom:22px">
     <div class="kpi-card success animate-fade-up">
       <div class="kpi-num" id="kpi-recomendados" style="font-size:2.2rem;font-weight:800;color:var(--success)">0</div>
-      <div class="kpi-label">⭐ Recomendados</div>
+      <div class="kpi-label">⭐ Alto fit ≥70%</div>
     </div>
     <div class="kpi-card warning animate-fade-up">
       <div class="kpi-num" id="kpi-consideracion" style="font-size:2.2rem;font-weight:800;color:#b5860a">0</div>
-      <div class="kpi-label">🔍 En Consideración</div>
+      <div class="kpi-label">🔍 Medio 40-69%</div>
     </div>
     <div class="kpi-card animate-fade-up">
       <div class="kpi-num" id="kpi-archivo" style="font-size:2.2rem;font-weight:800;color:var(--neutral)">0</div>
-      <div class="kpi-label">📁 Archivados</div>
+      <div class="kpi-label">📁 Bajo &lt;40%</div>
     </div>
     <div class="kpi-card accent animate-fade-up">
       <div class="kpi-num" id="kpi-banco-total" style="font-size:2.2rem;font-weight:800;color:var(--accent)">0</div>
@@ -1120,7 +1120,7 @@ function captureSnapshot() {
     refDatabase:  JSON.stringify(refDatabase),
     tabsHTML:     (() => {
       const o = {};
-      ['tab-contratados','tab-patron'].forEach(id => {
+      ['tab-contratados'].forEach(id => {
         const el = document.getElementById(id);
         if (el) o[id] = el.innerHTML;
       });
@@ -1460,12 +1460,15 @@ function saveData() {
       subtitle: document.getElementById('header-subtitle').textContent,
       badge: document.getElementById('header-badge').textContent
     };
-    document.querySelectorAll('.tab-content').forEach(tab => {
+    const SAVE_TABS = ['tab-contratados','tab-miguel']; // solo tabs con contenido editable manual
+    SAVE_TABS.forEach(id => {
+      const tab = document.getElementById(id);
+      if (!tab) return;
       const clone = tab.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(e => e.removeAttribute('contenteditable'));
-      data._tabs[tab.id] = clone.innerHTML;
+      data._tabs[id] = clone.innerHTML;
     });
-    localStorage.setItem('dashboard-v5', JSON.stringify(data));
+    localStorage.setItem('dashboard-v7', JSON.stringify(data));
     const s = document.getElementById('saveStatus');
     s.classList.add('show');
     setTimeout(() => s.classList.remove('show'), 2500);
@@ -1475,12 +1478,14 @@ function saveData() {
 function loadData() {
   try {
     // Limpiar versiones anteriores
-    ['dashboard-v3','dashboard-v4'].forEach(k => localStorage.removeItem(k));
-    const saved = localStorage.getItem('dashboard-v5');
+    ['dashboard-v3','dashboard-v4','dashboard-v5','dashboard-v6'].forEach(k => localStorage.removeItem(k));
+    const saved = localStorage.getItem('dashboard-v7');
     if (saved) {
       const data = JSON.parse(saved);
       if (data._tabs) {
+        const RESTORE_TABS = ['tab-contratados','tab-miguel'];
         Object.keys(data._tabs).forEach(id => {
+          if (!RESTORE_TABS.includes(id)) return;
           const el = document.getElementById(id);
           if (el) el.innerHTML = data._tabs[id];
         });
@@ -1504,7 +1509,7 @@ function loadData() {
 
 function resetData() {
   if (confirm('¿Restablecer todo el contenido original? Se perderán todos los cambios guardados.')) {
-    ['dashboard-v3','dashboard-v4','dashboard-v5'].forEach(k => localStorage.removeItem(k));
+    ['dashboard-v3','dashboard-v4','dashboard-v5','dashboard-v6'].forEach(k => localStorage.removeItem(k));
     location.reload();
   }
 }
@@ -1558,22 +1563,16 @@ function showTab(id) {
   document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
   const tabEl = document.getElementById(id);
   if (tabEl) tabEl.classList.add('active');
-  // Mark correct button by iterating all tab-btns
-  let inSubGroup = false;
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    const oc = btn.getAttribute('onclick') || '';
-    if (oc.includes("'" + id + "'") || oc.includes('"' + id + '"')) {
-      btn.classList.add('active');
-      // If it's a sub-tab, also activate parent group button
-      const group = btn.closest('.tab-group');
-      if (group) {
-        inSubGroup = true;
-        const groupBtn = group.querySelector('.tab-group-btn');
-        if (groupBtn) groupBtn.classList.add('open');
-      }
+  // Mark button using data-tab attribute (reliable cross-browser)
+  const btn = document.querySelector('[data-tab="' + id + '"]');
+  if (btn) {
+    btn.classList.add('active');
+    const group = btn.closest('.tab-group');
+    if (group) {
+      const groupBtn = group.querySelector('.tab-group-btn');
+      if (groupBtn) groupBtn.classList.add('open');
     }
-  });
-  // Close dropdown after selection
+  }
   document.querySelectorAll('.tab-group-items').forEach(el => el.classList.remove('open'));
   window.scrollTo({top:0,behavior:'smooth'});
   if (id === 'tab-resumen') { animateCounters(); updateDashboardKPIs(); }
