@@ -1,4 +1,4 @@
-<!DOCTYPE html><!-- ODL v2.3 build 20260529_191034 -->
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -654,17 +654,17 @@ body.analysis-active .save-status { display:none !important; }
 </div>
 
 <div class="tab-nav">
-  <button class="tab-btn active" onclick="showTab('tab-resumen')" data-tab="tab-resumen">📊 Resumen</button>
-  <button class="tab-btn" onclick="showTab('tab-cvs')" data-tab="tab-cvs">📂 Banco de CVs</button>
-  <button class="tab-btn" onclick="showTab('tab-contratados')" data-tab="tab-contratados">👥 Equipo Actual</button>
-  <button class="tab-btn" onclick="showTab('tab-miguel')" data-tab="tab-miguel">📖 Casos</button>
-  <button class="tab-btn" onclick="showTab('tab-patron')" data-tab="tab-patron">🔍 Patrón General</button>
+  <button class="tab-btn active" onclick="showTab('tab-resumen')">📊 Resumen</button>
+  <button class="tab-btn" onclick="showTab('tab-cvs')">📂 Banco de CVs</button>
+  <button class="tab-btn" onclick="showTab('tab-contratados')">👥 Equipo Actual</button>
+  <button class="tab-btn" onclick="showTab('tab-miguel')">📖 Casos</button>
+  <button class="tab-btn" onclick="showTab('tab-patron')">🔍 Patrón General</button>
   <!-- Sub-grupo ADN -->
   <div class="tab-group" id="tab-group-adn">
     <button class="tab-btn tab-group-btn" onclick="toggleTabGroup('tab-group-adn')">🧬 ADN ▾</button>
     <div class="tab-group-items" id="tab-group-adn-items">
-      <button class="tab-btn sub-tab" onclick="showTab('tab-referencias')" data-tab="tab-referencias">🧬 Referencias</button>
-      <button class="tab-btn sub-tab" onclick="showTab('tab-inteligencia')" data-tab="tab-inteligencia">🧠 Inteligencia</button>
+      <button class="tab-btn sub-tab" onclick="showTab('tab-referencias')">🧬 Referencias</button>
+      <button class="tab-btn sub-tab" onclick="showTab('tab-inteligencia')">🧠 Inteligencia</button>
     </div>
   </div>
 </div>
@@ -677,15 +677,15 @@ body.analysis-active .save-status { display:none !important; }
   <div class="kpi-grid" style="margin-bottom:22px">
     <div class="kpi-card success animate-fade-up">
       <div class="kpi-num" id="kpi-recomendados" style="font-size:2.2rem;font-weight:800;color:var(--success)">0</div>
-      <div class="kpi-label">⭐ Alto fit ≥70%</div>
+      <div class="kpi-label">⭐ Recomendados</div>
     </div>
     <div class="kpi-card warning animate-fade-up">
       <div class="kpi-num" id="kpi-consideracion" style="font-size:2.2rem;font-weight:800;color:#b5860a">0</div>
-      <div class="kpi-label">🔍 Medio 40-69%</div>
+      <div class="kpi-label">🔍 En Consideración</div>
     </div>
     <div class="kpi-card animate-fade-up">
       <div class="kpi-num" id="kpi-archivo" style="font-size:2.2rem;font-weight:800;color:var(--neutral)">0</div>
-      <div class="kpi-label">📁 Bajo &lt;40%</div>
+      <div class="kpi-label">📁 Archivados</div>
     </div>
     <div class="kpi-card accent animate-fade-up">
       <div class="kpi-num" id="kpi-banco-total" style="font-size:2.2rem;font-weight:800;color:var(--accent)">0</div>
@@ -1093,9 +1093,11 @@ body.analysis-active .save-status { display:none !important; }
 </div>
 
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 let editMode = false;
 let saveTimer = null;
+let chartFit = null;
 
 // Keyword helpers - acepta string legacy o {kw,cat} nuevo formato
 function kwText(k)  { return (typeof k === 'object' && k !== null) ? k.kw  : k; }
@@ -1120,7 +1122,7 @@ function captureSnapshot() {
     refDatabase:  JSON.stringify(refDatabase),
     tabsHTML:     (() => {
       const o = {};
-      ['tab-contratados'].forEach(id => {
+      ['tab-contratados','tab-patron'].forEach(id => {
         const el = document.getElementById(id);
         if (el) o[id] = el.innerHTML;
       });
@@ -1284,6 +1286,7 @@ function showHistToast(msg) {
 // END HISTORY ENGINE
 
 
+let chartArea = null;
 
 // ==============================================
 // ESTADO CENTRAL — única fuente de verdad
@@ -1460,15 +1463,12 @@ function saveData() {
       subtitle: document.getElementById('header-subtitle').textContent,
       badge: document.getElementById('header-badge').textContent
     };
-    const SAVE_TABS = ['tab-contratados','tab-miguel']; // solo tabs con contenido editable manual
-    SAVE_TABS.forEach(id => {
-      const tab = document.getElementById(id);
-      if (!tab) return;
+    document.querySelectorAll('.tab-content').forEach(tab => {
       const clone = tab.cloneNode(true);
       clone.querySelectorAll('[contenteditable]').forEach(e => e.removeAttribute('contenteditable'));
-      data._tabs[id] = clone.innerHTML;
+      data._tabs[tab.id] = clone.innerHTML;
     });
-    localStorage.setItem('dashboard-v7', JSON.stringify(data));
+    localStorage.setItem('dashboard-v5', JSON.stringify(data));
     const s = document.getElementById('saveStatus');
     s.classList.add('show');
     setTimeout(() => s.classList.remove('show'), 2500);
@@ -1478,14 +1478,12 @@ function saveData() {
 function loadData() {
   try {
     // Limpiar versiones anteriores
-    ['dashboard-v3','dashboard-v4','dashboard-v5','dashboard-v6'].forEach(k => localStorage.removeItem(k));
-    const saved = localStorage.getItem('dashboard-v7');
+    ['dashboard-v3','dashboard-v4'].forEach(k => localStorage.removeItem(k));
+    const saved = localStorage.getItem('dashboard-v5');
     if (saved) {
       const data = JSON.parse(saved);
       if (data._tabs) {
-        const RESTORE_TABS = ['tab-contratados','tab-miguel'];
         Object.keys(data._tabs).forEach(id => {
-          if (!RESTORE_TABS.includes(id)) return;
           const el = document.getElementById(id);
           if (el) el.innerHTML = data._tabs[id];
         });
@@ -1509,7 +1507,7 @@ function loadData() {
 
 function resetData() {
   if (confirm('¿Restablecer todo el contenido original? Se perderán todos los cambios guardados.')) {
-    ['dashboard-v3','dashboard-v4','dashboard-v5','dashboard-v6'].forEach(k => localStorage.removeItem(k));
+    ['dashboard-v3','dashboard-v4','dashboard-v5'].forEach(k => localStorage.removeItem(k));
     location.reload();
   }
 }
@@ -1561,18 +1559,18 @@ document.addEventListener('click', e => {
 function showTab(id) {
   document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-  const tabEl = document.getElementById(id);
-  if (tabEl) tabEl.classList.add('active');
-  // Mark button using data-tab attribute (reliable cross-browser)
-  const btn = document.querySelector('[data-tab="' + id + '"]');
-  if (btn) {
-    btn.classList.add('active');
-    const group = btn.closest('.tab-group');
-    if (group) {
-      const groupBtn = group.querySelector('.tab-group-btn');
-      if (groupBtn) groupBtn.classList.add('open');
-    }
+  document.getElementById(id).classList.add('active');
+  // Mark correct button — check both regular and sub-tabs
+  const subBtn = document.querySelector(`.sub-tab[onclick="showTab('${id}')"]`);
+  if (subBtn) {
+    subBtn.classList.add('active');
+    const groupBtn = subBtn.closest('.tab-group')?.querySelector('.tab-group-btn');
+    if (groupBtn) groupBtn.classList.add('open');
+  } else {
+    const regularBtn = document.querySelector(`.tab-btn:not(.sub-tab)[onclick="showTab('${id}')"]`);
+    if (regularBtn) regularBtn.classList.add('active');
   }
+  // Close dropdown after selection
   document.querySelectorAll('.tab-group-items').forEach(el => el.classList.remove('open'));
   window.scrollTo({top:0,behavior:'smooth'});
   if (id === 'tab-resumen') { animateCounters(); updateDashboardKPIs(); }
@@ -2045,115 +2043,44 @@ function renderPatronGeneral() {
   // Re-apply filter
   setPatronFilter(patronGeneralFilter);
 
-  // ── Radar charts — native Canvas, no library needed ──
+  // ── Radar charts ──
   const cats = ['actitud','fisico','tecnico','social'];
   const catLabels = ['Actitud','Fisico','Tecnico','Social'];
 
   const calcRadarData = (refs) => {
     const totals = { actitud:0, fisico:0, tecnico:0, social:0 };
+    const counts = { actitud:0, fisico:0, tecnico:0, social:0 };
     refs.forEach(r => {
       (r.keywords || []).forEach(k => {
         const cat = kwCat(k);
-        if (totals[cat] !== undefined) totals[cat]++;
+        if (totals[cat] !== undefined) { totals[cat]++; counts[cat]++; }
       });
     });
-    const maxVal = Math.max(...Object.values(totals), 1);
-    return cats.map(c => Math.round((totals[c] / maxVal) * 10));
+    return cats.map(c => refs.length ? Math.min(10, Math.round((totals[c] / Math.max(refs.length,1)) * 10)) : 0);
   };
 
-  const drawRadarNative = (canvasId, data, color) => {
+  const drawRadar = (canvasId, data, color) => {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    const cx = W / 2, cy = H / 2;
-    const R = Math.min(W, H) * 0.34;
-    const N = data.length;
-    const angleStep = (Math.PI * 2) / N;
-    const startAngle = -Math.PI / 2;
-
-    ctx.clearRect(0, 0, W, H);
-
-    // Grid rings
-    for (let ring = 1; ring <= 5; ring++) {
-      const r = R * (ring / 5);
-      ctx.beginPath();
-      for (let i = 0; i < N; i++) {
-        const angle = startAngle + i * angleStep;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    // Destroy previous chart if exists
+    const existing = Chart.getChart(canvas);
+    if (existing) existing.destroy();
+    new Chart(canvas, {
+      type: 'radar',
+      data: {
+        labels: catLabels,
+        datasets: [{ data, backgroundColor: color + '33', borderColor: color, borderWidth: 2, pointBackgroundColor: color, pointRadius: 4 }]
+      },
+      options: {
+        responsive: false,
+        scales: { r: { min: 0, max: 10, ticks: { stepSize: 2, font: { size: 10 } }, pointLabels: { font: { size: 11, weight: 'bold' } } } },
+        plugins: { legend: { display: false } }
       }
-      ctx.closePath();
-      ctx.strokeStyle = ring === 5 ? '#ccc' : '#e8e8e8';
-      ctx.lineWidth = ring === 5 ? 1.5 : 1;
-      ctx.stroke();
-    }
-
-    // Axis lines
-    for (let i = 0; i < N; i++) {
-      const angle = startAngle + i * angleStep;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + R * Math.cos(angle), cy + R * Math.sin(angle));
-      ctx.strokeStyle = '#ddd';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
-
-    // Data polygon
-    ctx.beginPath();
-    for (let i = 0; i < N; i++) {
-      const angle = startAngle + i * angleStep;
-      const val = (data[i] / 10) * R;
-      const x = cx + val * Math.cos(angle);
-      const y = cy + val * Math.sin(angle);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.fillStyle = color + '33';
-    ctx.fill();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    // Data points
-    for (let i = 0; i < N; i++) {
-      const angle = startAngle + i * angleStep;
-      const val = (data[i] / 10) * R;
-      ctx.beginPath();
-      ctx.arc(cx + val * Math.cos(angle), cy + val * Math.sin(angle), 4, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
-    }
-
-    // Labels
-    ctx.font = 'bold 11px Rubik, Arial, sans-serif';
-    ctx.fillStyle = '#333';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    for (let i = 0; i < N; i++) {
-      const angle = startAngle + i * angleStep;
-      const labelR = R + 22;
-      const lx = cx + labelR * Math.cos(angle);
-      const ly = cy + labelR * Math.sin(angle);
-      ctx.fillText(catLabels[i], lx, ly);
-    }
-
-    // Value labels on points
-    ctx.font = '10px Rubik, Arial, sans-serif';
-    ctx.fillStyle = color;
-    for (let i = 0; i < N; i++) {
-      const angle = startAngle + i * angleStep;
-      const val = (data[i] / 10) * R;
-      const vx = cx + (val + 10) * Math.cos(angle);
-      const vy = cy + (val + 10) * Math.sin(angle);
-      if (data[i] > 0) ctx.fillText(data[i], vx, vy);
-    }
+    });
   };
 
-  drawRadarNative('radar-exito', calcRadarData(exitos), '#2d6a4f');
-  drawRadarNative('radar-dano',  calcRadarData(danos),  '#c1121f');
+  drawRadar('radar-exito', calcRadarData(exitos), '#2d6a4f');
+  drawRadar('radar-dano',  calcRadarData(danos),  '#c1121f');
 
 }
 // END PATRON GENERAL
@@ -2295,93 +2222,68 @@ function renderInteligenciaPatron() {
 // END INTELIGENCIA DEL PATRON
 
 function renderCharts(rec, cons, arch, done) {
-  // -- Chart 1: Fit distribution — native canvas doughnut --
+  // -- Chart 1: Fit distribution (doughnut) --
   const ctxFit = document.getElementById('chart-fit');
   if (!ctxFit) return;
-  const ctx1 = ctxFit.getContext('2d');
-  const W1 = ctxFit.width || 260, H1 = ctxFit.height || 260;
-  const total = rec + cons + arch;
-  ctx1.clearRect(0, 0, W1, H1);
-  if (total > 0) {
-    const cx = W1/2, cy = H1/2, R = Math.min(W1,H1)*0.38, r = R*0.62;
-    const segments = [
-      { val: rec,  color: '#2d6a4f', label: 'Alto' },
-      { val: cons, color: '#e9c46a', label: 'Medio' },
-      { val: arch, color: '#dee2e6', label: 'Bajo' },
-    ];
-    let startA = -Math.PI/2;
-    segments.forEach(seg => {
-      if (!seg.val) return;
-      const sweep = (seg.val / total) * Math.PI * 2;
-      ctx1.beginPath();
-      ctx1.moveTo(cx, cy);
-      ctx1.arc(cx, cy, R, startA, startA + sweep);
-      ctx1.closePath();
-      ctx1.fillStyle = seg.color;
-      ctx1.fill();
-      startA += sweep;
-    });
-    // Donut hole
-    ctx1.beginPath();
-    ctx1.arc(cx, cy, r, 0, Math.PI*2);
-    ctx1.fillStyle = getComputedStyle(document.body).getPropertyValue('--card') || '#fff';
-    ctx1.fill();
-    // Center text
-    ctx1.textAlign = 'center'; ctx1.textBaseline = 'middle';
-    ctx1.font = 'bold 22px Rubik, Arial';
-    ctx1.fillStyle = '#1a3c5e';
-    ctx1.fillText(total, cx, cy - 8);
-    ctx1.font = '11px Rubik, Arial';
-    ctx1.fillStyle = '#6c757d';
-    ctx1.fillText('CVs', cx, cy + 10);
-    // Legend
-    let lx = 10, ly = H1 - 48;
-    segments.forEach(seg => {
-      ctx1.fillStyle = seg.color;
-      ctx1.fillRect(lx, ly, 12, 12);
-      ctx1.font = '10px Rubik, Arial';
-      ctx1.fillStyle = '#444';
-      ctx1.textAlign = 'left';
-      ctx1.fillText(`${seg.label}: ${seg.val}`, lx + 16, ly + 9);
-      lx += 80;
-    });
-  } else {
-    ctx1.textAlign = 'center'; ctx1.textBaseline = 'middle';
-    ctx1.font = '13px Rubik, Arial';
-    ctx1.fillStyle = '#aaa';
-    ctx1.fillText('Sin CVs aun', W1/2, H1/2);
-  }
+  if (chartFit) chartFit.destroy();
+  chartFit = new Chart(ctxFit, {
+    type: 'doughnut',
+    data: {
+      labels: ['⭐ Recomendados (≥70%)', '🔍 En Consideración (40-69%)', '📁 Archivados (<40%)'],
+      datasets: [{
+        data: [rec, cons, arch],
+        backgroundColor: ['#2d6a4f', '#e9c46a', '#dee2e6'],
+        borderColor: ['#fff','#fff','#fff'],
+        borderWidth: 3,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '62%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} candidatos` } }
+      }
+    }
+  });
 
-  // -- Chart 2: By area — native canvas horizontal bar --
+  // -- Chart 2: By area (horizontal bar) --
   const ctxArea = document.getElementById('chart-area');
   if (!ctxArea) return;
-  const ctx2 = ctxArea.getContext('2d');
-  const W2 = ctxArea.width || 260, H2 = ctxArea.height || 260;
-  ctx2.clearRect(0, 0, W2, H2);
+  if (chartArea) chartArea.destroy();
+
   const areaCounts = {};
-  done.forEach(c => { const a = c.area || 'Sin definir'; areaCounts[a] = (areaCounts[a]||0)+1; });
-  const entries = Object.entries(areaCounts).sort((a,b) => b[1]-a[1]).slice(0,6);
-  if (!entries.length) {
-    ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle';
-    ctx2.font = '13px Rubik, Arial'; ctx2.fillStyle = '#aaa';
-    ctx2.fillText('Sin datos', W2/2, H2/2); return;
-  }
-  const colors2 = ['#1a3c5e','#e85d04','#2d6a4f','#b5860a','#6c757d','#2a5f8f'];
-  const maxVal2 = Math.max(...entries.map(e => e[1]));
-  const barH = Math.min(28, (H2 - 20) / entries.length - 6);
-  const labelW = 110, padLeft = labelW + 8, padRight = 32;
-  entries.forEach(([label, val], i) => {
-    const y = 12 + i * (barH + 8);
-    const barW = ((val / maxVal2) * (W2 - padLeft - padRight));
-    ctx2.fillStyle = '#f0f0f0';
-    ctx2.fillRect(padLeft, y, W2 - padLeft - padRight, barH);
-    ctx2.fillStyle = colors2[i % colors2.length];
-    ctx2.fillRect(padLeft, y, barW, barH);
-    ctx2.font = '10px Rubik, Arial'; ctx2.textAlign = 'right'; ctx2.fillStyle = '#444';
-    const trimLabel = label.length > 16 ? label.slice(0,15)+'.' : label;
-    ctx2.fillText(trimLabel, padLeft - 4, y + barH/2 + 4);
-    ctx2.textAlign = 'left'; ctx2.fillStyle = '#fff';
-    if (barW > 20) ctx2.fillText(val, padLeft + 5, y + barH/2 + 4);
+  done.forEach(c => {
+    const a = c.area || 'Sin definir';
+    areaCounts[a] = (areaCounts[a] || 0) + 1;
+  });
+  const labels = Object.keys(areaCounts);
+  const values = Object.values(areaCounts);
+  const colors = ['#1a3c5e','#2a5f8f','#e85d04','#2d6a4f','#c1121f','#e9c46a','#6c757d','#52b788'];
+
+  chartArea = new Chart(ctxArea, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'CVs',
+        data: values,
+        backgroundColor: labels.map((_, i) => colors[i % colors.length] + 'cc'),
+        borderColor:     labels.map((_, i) => colors[i % colors.length]),
+        borderWidth: 1.5,
+        borderRadius: 5,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { stepSize: 1, font: { size: 11 } }, grid: { color: '#f0f0f0' } },
+        y: { ticks: { font: { size: 11 } }, grid: { display: false } }
+      }
+    }
   });
 }
 
