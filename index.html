@@ -914,7 +914,7 @@ body.analysis-active .save-status { display:none !important; }
         </div>
         <!-- Timeline de mutación -->
         <div style="border-top:1px solid var(--border);padding-top:14px">
-          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📈 Historial de mutaciones</div>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📈 Historial de aprendizaje</div>
           <div id="patron-timeline" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto"></div>
         </div>
         <!-- Barra de fuerza del patrón -->
@@ -2625,7 +2625,7 @@ function renderPatronPreview() {
     total: approved.length,
     code: lastRef.code || '—',
     score: lastRef.score,
-    topKeyword: (lastRef.keywords || [])[0] || '—',
+    topKeyword: kwText((lastRef.keywords || [])[0]) || '—',
     exitos: exitos.length,
     danos: danos.length
   };
@@ -2793,21 +2793,53 @@ async function approveRef(id) {
   // Extract keywords from context using Claude — classified as positive or negative
   if (ref.context && ref.context.length > 10) {
     try {
-      const prompt = `Extrae características laborales del siguiente texto. Reglas ESTRICTAS:
-- Máximo 2 palabras por característica. NUNCA oraciones, NUNCA verbos, NUNCA años ni números.
-- Solo sustantivos o adjetivos concretos. Ejemplos válidos: "adaptabilidad", "trabajo físico", "actitud servicio", "rotación frecuente".
-- Ejemplos INVÁLIDOS (demasiado largos o narrativos): "se adapta fácilmente al trabajo físico", "ha navegado muchas transformaciones", "14 años de experiencia".
-- Clasifica en 4 categorías:
-  · actitud: disposición, comportamiento, valores (ej: "disciplina", "servicio", "resiliencia")
-  · fisico: resistencia, fuerza, tolerancia física (ej: "resistencia física", "trabajo pesado")
-  · tecnico: habilidades de oficio o área específica (ej: "CAD", "operación maquinaria", "impresión")
-  · social: relación con otros, liderazgo, comunicación (ej: "trabajo equipo", "liderazgo")
-- Negativas: características desfavorables o de riesgo, máximo 3, mismas reglas de brevedad.
-  Si contiene negación ("no maneja", "no es") extrae solo el sustantivo negativo: "desorganización", "trabajo solitario".
+      const prompt = `Eres un especialista en RH. Tu tarea es leer una descripción de una persona y mapearla a conceptos estándar de RH del catálogo siguiente. NO inventes etiquetas nuevas — usa siempre el término del catálogo que mejor represente lo que describes, aunque el texto lo diga con otras palabras.
+
+CATÁLOGO DE CONCEPTOS ESTÁNDAR:
+
+actitud:
+- "Tolerancia a jornadas largas" → cuando el texto dice: aguanta horas extra, no le molesta quedarse, acepta horarios extendidos, resistente al cansancio laboral
+- "Disciplina" → puntual, ordenado, cumplido, responsable, no falta
+- "Obediencia" → sigue instrucciones, no cuestiona, hace lo que se pide
+- "Apego laboral" → lleva años en la empresa, no rota, estable, leal
+- "Motivación" → ganas de crecer, interés en aprender, proactivo
+- "Resiliencia" → se recupera, aguanta presión, no se rinde
+- "Cuidado en el trabajo" → detallista, no descuida, preciso
+
+fisico:
+- "Resistencia física" → aguanta trabajo pesado, no se cansa fácil, fuerza, capacidad física
+- "Destreza manual" → habilidad con las manos, precisión física, manualidades
+
+tecnico:
+- Nombres de software o herramientas tal como aparecen: "CorelDraw", "Photoshop", "AutoCAD", "plotter", "serigrafía", etc.
+- "Operación maquinaria" → maneja máquinas, operador, equipo industrial
+- "Habilidades de producción" → sabe producir, conoce el proceso, experiencia en taller
+
+social:
+- "Trabajo en equipo" → colabora, se lleva bien, integración, convive
+- "Comunicación efectiva" → se expresa bien, facilidad de palabra, trato fácil
+- "Liderazgo" → coordina, guía a otros, mando, supervisión
+- "Servicio al cliente" → trato con clientes, atención, servicio
+
+NEGATIVOS (usar cuando el texto indica riesgo o limitación):
+- "Baja innovación" → poca creatividad, no propone, hace lo mismo, sin iniciativa
+- "Trabajo solitario" → no le gusta el equipo, prefiere solo, no socializa
+- "Sin delegación" → no sabe delegar, hace todo solo, no confía en otros
+- "Dependencia laboral" → necesita ser dirigido, sin autonomía, espera instrucciones
+- "Baja organización" → desorden, no planea, caótico
+- "Alta rotación" → ha cambiado mucho de trabajo, inestable
+- "Sin procesos" → no sigue procedimientos, improvisa, informal
+
+INSTRUCCIONES:
+1. Lee el texto y detecta qué conceptos del catálogo aplican
+2. Si el texto lo dice con otras palabras, igual usa el término del catálogo
+3. Si algo no encaja en ningún concepto del catálogo, ignóralo
+4. Máximo 4 positivos en total, máximo 3 negativos
+5. Solo incluye lo que realmente está en el texto — no asumas
 
 Texto: "${ref.context}"
 
-Responde SOLO con este JSON, sin explicación ni markdown:
+Responde SOLO con este JSON:
 {
   "positivas": { "actitud": [], "fisico": [], "tecnico": [], "social": [] },
   "negativas": []
