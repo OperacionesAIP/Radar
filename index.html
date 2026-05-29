@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radar de Contratación — laser</title>
+<title>Proyecto ODL — Alto Impacto Publicidad</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=DM+Mono:wght@500&display=swap');
 :root {
@@ -569,8 +569,8 @@ body.analysis-active .save-status { display:none !important; }
 
 <div class="header">
   <div>
-    <h1 class="editable" contenteditable="false" id="header-title">Radar de Contratación</h1>
-    <p class="editable" contenteditable="false" id="header-subtitle">Análisis de 183 candidatos — Empresa Manufactura | Torreón / Durango | Mayo 2026</p>
+    <h1 class="editable" contenteditable="false" id="header-title">Proyecto ODL</h1>
+    <p class="editable" contenteditable="false" id="header-subtitle">Alto Impacto Publicidad · Torreón, Coahuila</p>
   </div>
   <div class="header-right">
     <div class="header-badge editable" contenteditable="false" id="header-badge">Alto Impacto</div>
@@ -647,7 +647,7 @@ body.analysis-active .save-status { display:none !important; }
 <div class="tab-nav">
   <button class="tab-btn active" onclick="showTab('tab-resumen')">📊 Resumen Ejecutivo</button>
   <button class="tab-btn" onclick="showTab('tab-patron')">🔍 Patrón General</button>
-  <button class="tab-btn" onclick="showTab('tab-contratados')">👥 Contratados</button>
+  <button class="tab-btn" onclick="showTab('tab-contratados')">👥 Equipo Actual</button>
   <button class="tab-btn" onclick="showTab('tab-miguel')">📖 Casos de Estudio</button>
   <button class="tab-btn" onclick="showTab('tab-recomendados')">⭐ Recomendados</button>
   <button class="tab-btn" onclick="showTab('tab-consideracion')">🔍 En Consideración</button>
@@ -808,7 +808,8 @@ body.analysis-active .save-status { display:none !important; }
 <!-- ===== TAB 3: CONTRATADOS ===== -->
 <div class="tab-content" id="tab-contratados">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <div class="section-title" style="margin:0">Historial completo de contrataciones (mayo 2026)</div>
+    <div class="section-title" style="margin:0">Equipo Actual</div>
+      <div style="font-size:.76rem;color:var(--muted);margin-top:3px">Personas que han formado parte de la empresa — activos, salidas y reingresos</div>
     <button class="hist-btn" onclick="openHistPanel()" title="Ver historial de cambios">🕑 Historial <span class="hist-badge">0</span></button>
   </div>
   <div class="timeline" id="timeline">
@@ -1585,20 +1586,96 @@ function addTimelineItem() {
   const tl = document.getElementById('timeline');
   const div = document.createElement('div');
   div.className = 'tl-item';
+  const uid = 'p' + Date.now();
   div.innerHTML = `
     <div class="tl-dot success"></div>
     <div class="tl-card">
       <button class="del-btn" style="position:absolute;top:10px;right:10px" title="Eliminar">×</button>
-      <div class="tl-header">
-        <div class="tl-name editable" contenteditable="${editMode?'true':'false'}">Nombre</div>
-        <span class="badge badge-success">Activo ✓</span>
+
+      <!-- Fila 1: Nombre + Status -->
+      <div class="tl-header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div class="tl-name editable" contenteditable="${editMode?'true':'false'}" style="font-size:.96rem;font-weight:700;color:var(--primary)">Nombre</div>
+        <select class="tl-status-sel" data-id="${uid}" onchange="updateStatusStyle(this)"
+          style="font-size:.72rem;padding:4px 8px;border-radius:7px;border:1.5px solid var(--success);background:#e8f5e9;color:var(--success);font-weight:700;cursor:pointer">
+          <option value="success">Activo ✓</option>
+          <option value="neutral">Salio — personal</option>
+          <option value="danger">Salio — Inconformidad</option>
+          <option value="warning">No concretado</option>
+        </select>
       </div>
-      <div class="tl-area editable" contenteditable="${editMode?'true':'false'}">🔧 Área | ★★★★☆</div>
-      <div class="tl-desc editable-block" contenteditable="${editMode?'true':'false'}">Descripción del desempeño y observaciones.</div>
+
+      <!-- Fila 2: Tipo + Area -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <select style="font-size:.72rem;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text)">
+          <option value="primera">Primera vez</option>
+          <option value="reingreso">Reingreso</option>
+        </select>
+        <select style="font-size:.72rem;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text)">
+          <option value="">Area...</option>
+          <option>Taller</option>
+          <option>Diseno 3D</option>
+          <option>Impresion / Plotter</option>
+          <option>Publicidad Movil</option>
+          <option>Administracion</option>
+          <option>Recepcion</option>
+          <option>RH</option>
+          <option>Marketing</option>
+          <option>Sistemas</option>
+          <option>Supervision</option>
+        </select>
+      </div>
+
+      <!-- Fila 3: Fecha ingreso + Evaluacion + Boton referencia -->
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+        <div style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px">
+          <span>Ingreso:</span>
+          <input type="month" style="font-size:.72rem;border:1px solid var(--border);border-radius:5px;padding:2px 6px;background:var(--card);color:var(--text)">
+        </div>
+        <div style="font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px">
+          <span>Evaluacion:</span>
+          <input type="number" min="1" max="10" placeholder="—" style="width:44px;font-size:.72rem;border:1px solid var(--border);border-radius:5px;padding:2px 6px;text-align:center;background:var(--card);color:var(--text)">
+          <span>/10</span>
+        </div>
+        <button onclick="convertirEnReferencia(this)"
+          style="font-size:.7rem;background:#e8f0fe;color:var(--primary);border:1.5px solid var(--primary-light);border-radius:6px;padding:4px 10px;cursor:pointer;font-weight:700">
+          🧬 Convertir en referencia
+        </button>
+      </div>
+
+      <!-- Fila 4: Descripcion -->
+      <div class="tl-desc editable-block" contenteditable="${editMode?'true':'false'}"
+        style="font-size:.82rem;color:var(--muted);line-height:1.5;border-top:1px solid var(--border);padding-top:8px">
+        Descripcion del desempeno y observaciones.
+      </div>
     </div>`;
   tl.appendChild(div);
-  div.querySelector('.editable').focus();
+  div.querySelector('.tl-name').focus();
   scheduleSave();
+}
+
+function convertirEnReferencia(btn) {
+  const card = btn.closest('.tl-card');
+  const nombre  = card.querySelector('.tl-name')?.textContent?.trim() || 'Sin nombre';
+  const desc    = card.querySelector('.tl-desc')?.textContent?.trim() || '';
+  const evalVal = card.querySelector('input[type=number]')?.value || '';
+  const area    = card.querySelector('select:nth-of-type(2)')?.value || '';
+  // Convertir evaluacion 1-10 a score 0-10 de referencia
+  const score = evalVal ? Math.min(10, Math.max(0, parseInt(evalVal))) : 7;
+  // Ir a la pestana de referencias y crear entrada
+  showTab('tab-referencias');
+  const id = 'ref-eq-' + Date.now();
+  const entry = {
+    id, fileName: nombre + ' (Equipo)',
+    score, context: desc, area,
+    approved: false, keywords: [], keywordsNeg: [],
+    code: '', status: 'pending-info'
+  };
+  refDatabase.push(entry);
+  renderRefCard(entry, true);
+  updateRefStats();
+  saveRefDatabase();
+  // Toast
+  showHistToast('Referencia creada: ' + nombre);
 }
 
 function addRecCard(gridId) {
